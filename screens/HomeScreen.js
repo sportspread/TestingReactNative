@@ -10,16 +10,46 @@ import {
   Button,
 } from 'react-native'
 import { WebBrowser } from 'expo'
-
 import { MonoText } from '../components/StyledText'
 import data from '../constants/dopestatz'
 export default class HomeScreen extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      ball: [],
+    }
+    // this.loadGames = this.loadGames.bind(this)
+    this.getGames = this.getGames.bind(this)
+  }
   static navigationOptions = {
     header: null,
   }
 
+  // Kyles Key = cca1dc9064mshca4afa3c2a7c913p1ee48djsn3e71d9a9afa8
+  // Sams Key = eb3aa29c30mshe3fcb151bf70b80p1d39ccjsn13eb2939026b
+  componentWillMount() {
+    fetch(
+      'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
+      {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key':
+            'cca1dc9064mshca4afa3c2a7c913p1ee48djsn3e71d9a9afa8',
+        },
+      }
+    )
+      .then(res => {
+        return res.json()
+      })
+      .then(resJSON => {
+        this.setState({ ball: resJSON.events })
+      })
+  }
+
   getGames() {
-    let teamsAndSpreads = data.events.map(event => {
+    console.log(this.state)
+    const gameData = this.state.ball
+    let teamsAndSpreads = gameData.map(event => {
       return {
         teams: event.teams.map(team => {
           return team.name
@@ -39,9 +69,9 @@ export default class HomeScreen extends React.Component {
           teamsAndSpreads[j + 1] = temp
         }
       }
+      console.log(teamsAndSpreads[0])
+      return teamsAndSpreads[0]
     }
-    console.log(teamsAndSpreads[0])
-    return teamsAndSpreads[0]
   }
 
   render() {
@@ -65,7 +95,7 @@ export default class HomeScreen extends React.Component {
           <View style={styles.getStartedContainer}>
             {this._maybeRenderDevelopmentModeWarning()}
 
-            <Text style={styles.getStartedText}>Get started by opening</Text>
+            <Text style={styles.getStartedText}>{this.state.test}</Text>
 
             <View
               style={[styles.codeHighlightContainer, styles.homeScreenFilename]}
@@ -78,7 +108,9 @@ export default class HomeScreen extends React.Component {
             <Text style={styles.getStartedText}>
               Press this button to see todays top games!
             </Text>
-            <Button title="BUTTONTIME" onPress={this.getGames} />
+            {/* <Button title="LOADGAMES" onPress={this.loadGames} /> */}
+
+            <Button title="GETGAMES" onPress={this.getGames} />
           </View>
 
           <View style={styles.helpContainer}>
