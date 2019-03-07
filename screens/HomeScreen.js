@@ -19,15 +19,29 @@ export default class HomeScreen extends React.Component {
   }
 
   getGames() {
-    let teams = data.events.map(event => {
+    let teamsAndSpreads = data.events.map(event => {
       return {
         teams: event.teams.map(team => {
           return team.name
         }),
+        spread:
+          event.lines[1].spread.point_spread_home > 0
+            ? event.lines[1].spread.point_spread_home
+            : event.lines[1].spread.point_spread_home * -1,
       }
     })
-    console.log(teams)
-    return teams
+    let length = teamsAndSpreads.length
+    for (let i = 0; i < length; i++) {
+      for (let j = 0; j < length - i - 1; j++) {
+        if (teamsAndSpreads[j].spread > teamsAndSpreads[j + 1].spread) {
+          let temp = teamsAndSpreads[j]
+          teamsAndSpreads[j] = teamsAndSpreads[j + 1]
+          teamsAndSpreads[j + 1] = temp
+        }
+      }
+    }
+    console.log(teamsAndSpreads[0])
+    return teamsAndSpreads[0]
   }
 
   render() {
