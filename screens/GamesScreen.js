@@ -14,7 +14,8 @@ import { WebBrowser } from "expo";
 import { MonoText } from "../components/StyledText";
 import data from "../constants/dopestatz";
 import styles from "./styles.js";
-export default class HomeScreen extends React.Component {
+
+export default class GamesScreen extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -65,18 +66,9 @@ export default class HomeScreen extends React.Component {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          {/* <View style={styles.welcomeContainer}>
-            <Image
-              source={
-                __DEV__
-                  ? require("../assets/images/robot-dev.png")
-                  : require("../assets/images/robot-prod.png")
-              }
-              style={styles.welcomeImage}
-            />
-          </View> */}
           <View>
             <Text style={styles.teams}>
+              Tonight's top Game is:
               {this.state.bestGame !== undefined
                 ? `Team A:${this.state.bestGame.teams[0]} Team B: ${
                     this.state.bestGame.teams[1]
@@ -84,26 +76,14 @@ export default class HomeScreen extends React.Component {
                 : "No Games Found"}
             </Text>
           </View>
-          <View style={styles.getStartedContainer}>
-            {/* {this._maybeRenderDevelopmentModeWarning()} */}
-
-            {/* <Text style={styles.getStartedText}>Get started by opening</Text> */}
-
-            {/* <View
-              style={[styles.codeHighlightContainer, styles.homeScreenFilename]}
-            >
-              <MonoText style={styles.codeHighlightText}>
-                screens/HomeScreen.js
-              </MonoText>
-            </View> */}
-
+          {/* <View style={styles.getStartedContainer}>
             <Text style={styles.getStartedText}>
               Press this button to see todays top games!
             </Text>
             <Button title="BUTTONTIME" onPress={this.getGames} />
-          </View>
+          </View> */}
 
-          <View style={styles.helpContainer}>
+          {/* <View style={styles.helpContainer}>
             <TouchableOpacity
               onPress={this._handleHelpPress}
               style={styles.helpLink}
@@ -112,56 +92,17 @@ export default class HomeScreen extends React.Component {
                 Help, it didn’t automatically reload!
               </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </ScrollView>
 
         <View style={styles.tabBarInfoContainer}>
           {/* <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text> */}
 
-          <View
+          {/* <View
             style={[styles.codeHighlightContainer, styles.navigationFilename]}
-          >
-            <MonoText style={styles.codeHighlightText}>
-              navigation/MainTabNavigator.js
-            </MonoText>
-          </View>
+          /> */}
         </View>
       </View>
     );
   }
-
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use
-          useful development tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
-  }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync(
-      "https://docs.expo.io/versions/latest/guides/development-mode"
-    );
-  };
-
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      "https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes"
-    );
-  };
 }
