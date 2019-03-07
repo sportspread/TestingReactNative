@@ -24,7 +24,6 @@ export default class HomeScreen extends React.Component {
         teams: event.teams.map(team => {
           return team.name
         }),
-        spread: event.lines[1].spread.point_spread_home,
       }
     })
     console.log(teams)
