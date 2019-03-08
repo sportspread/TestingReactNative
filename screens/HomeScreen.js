@@ -12,7 +12,7 @@ import {
 import { WebBrowser } from 'expo'
 import { MonoText } from '../components/StyledText'
 import data from '../constants/dopestatz'
-import { Kyleskey, SamsKey } from '../secrets.js'
+import { KylesKey, SamsKey } from '../secrets.js'
 import OtherGames from '../components/OtherGames'
 export default class HomeScreen extends React.Component {
   constructor() {
@@ -29,27 +29,27 @@ export default class HomeScreen extends React.Component {
     header: null,
   }
 
-  // Kyles Key = cca1dc9064mshca4afa3c2a7c913p1ee48djsn3e71d9a9afa8
-  // Sams Key = eb3aa29c30mshe3fcb151bf70b80p1d39ccjsn13eb2939026b
-
   componentDidMount() {
-    // fetch(
-    //   "https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods",
-    //   {
-    //     method: "GET",
-    //     headers: {
-    //       "X-RapidAPI-Key": "cca1dc9064mshca4afa3c2a7c913p1ee48djsn3e71d9a9afa8"
-    //     }
-    //   }
-    // )
-    //   .then(res => {
-    //     return res.json();
-    //   })
-    //   .then(resJSON => {
-    //     //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
-    //     this.setState({ allGames: resJSON.events });
-    //   });
-    this.setState({ allGamesData: data.events })
+    fetch(
+      'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
+      {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': SamsKey,
+        },
+      }
+    )
+      .then(res => {
+        return res.json()
+      })
+      .then(resJSON => {
+        //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
+        this.setState({ allGamesData: resJSON.events })
+      })
+
+    // This is for testing using dummy data VVVVVV
+
+    // this.setState({ allGamesData: data.events })
   }
 
   bubbleSort(arr) {
@@ -84,26 +84,6 @@ export default class HomeScreen extends React.Component {
       }
     })
     let sorted = this.bubbleSort(teamsAndSpreads)
-    // for (let i = 0; i < length; i++) {
-    //   for (let j = 0; j < length; j++) {
-    //     if (teamsAndSpreads[j + 1] === undefined) break
-    //     if (teamsAndSpreads[j].spread > teamsAndSpreads[j + 1].spread) {
-    //       let temp = teamsAndSpreads[j]
-    //       teamsAndSpreads[j] = teamsAndSpreads[j + 1]
-    //       teamsAndSpreads[j + 1] = temp
-    //     }
-    //   }
-
-    // let sorted = teamsAndSpreads.reduce((acc, game) => {
-    //   let lowest = undefined
-    //   if (lowest === undefined) {
-    //     lowest = game.spread
-    //   }
-    //   if (game.spread <= lowest) {
-    //     return [...acc, game]
-    //   }
-    // }, [])
-    console.log(sorted)
     this.setState({
       bestGame: sorted.shift(),
       otherGames: [...sorted],
