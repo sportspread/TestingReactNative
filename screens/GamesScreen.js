@@ -16,7 +16,6 @@ import { WebBrowser } from 'expo'
 import { MonoText } from '../components/StyledText'
 import { TopMatch } from '../components/TopMatch.js'
 import { OtherGames } from '../components/OtherGames.js'
-import { NBATeams, NBALogos } from '../teamsAlphabetical'
 
 export default class GamesScreen extends React.Component {
   constructor() {
@@ -33,28 +32,10 @@ export default class GamesScreen extends React.Component {
     return (
       <View>
         <Text>Here's Some Text</Text>
-        <Picker
-          selectedValue={this.state.favTeam}
-          onValueChange={teamName => {
-            this.setState({ favTeam: teamName })
-          }}
-          promt="Select Favorite Team"
-        >
-          <Picker.Item label="Please Select a Team" value="" />
-          {NBATeams.map(team => {
-            return (
-              <Picker.Item
-                label={team}
-                value={team}
-                key={NBATeams.indexOf(team)}
-              />
-            )
-          })}
-        </Picker>
+
         <Image
-          style={{ flex: 1, height: undefined, width: undefined }}
+          style={{ flex: 1, width: null, height: 50, resizeMode: 'contain' }}
           source={{ uri: NBALogos[NBATeams.indexOf(this.state.favTeam)] }}
-          resizeMode="contain"
         />
       </View>
     )

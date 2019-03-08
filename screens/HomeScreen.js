@@ -8,12 +8,14 @@ import {
   TouchableOpacity,
   View,
   Button,
+  Picker,
 } from 'react-native'
 import { WebBrowser } from 'expo'
 import { MonoText } from '../components/StyledText'
 import data from '../constants/dopestatz'
 import { KylesKey, SamsKey } from '../secrets.js'
 import OtherGames from '../components/OtherGames'
+import { NBATeams, NBALogos } from '../teamsAlphabetical'
 export default class HomeScreen extends React.Component {
   constructor() {
     super()
@@ -21,6 +23,7 @@ export default class HomeScreen extends React.Component {
       allGamesData: [],
       bestGame: {},
       otherGames: [],
+      favTeam: '',
     }
     // this.loadGames = this.loadGames.bind(this)
     this.getGames = this.getGames.bind(this)
@@ -81,7 +84,7 @@ export default class HomeScreen extends React.Component {
   }
 
   getGames() {
-    const { allGamesData } = this.state
+    const { allGamesData, favTeam } = this.state
     let teamsAndSpreads = allGamesData.map(event => {
       return {
         teams: event.teams.map(team => {
@@ -93,7 +96,19 @@ export default class HomeScreen extends React.Component {
             : event.lines[1].spread.point_spread_home * -1,
       }
     })
+
+    if (favTeam) {
+      teamsAndSpreads.forEach(game => {
+        game.teams.forEach(team => {
+          if (team.name === favTeam) {
+            game.spread = game.spread - game.spread * 0.33
+          }
+        })
+      })
+    }
+
     let sorted = this.bubbleSort(teamsAndSpreads)
+    console.log(sorted)
     this.setState({
       bestGame: sorted.shift(),
       otherGames: [...sorted],
@@ -143,6 +158,32 @@ export default class HomeScreen extends React.Component {
 
             <Button title="Show Me YA MOVES" onPress={this.getGames} />
           </View>
+
+          <View>
+            <Text style={styles.getStartedText}>
+              If you select a team from the options below, it will weigh your
+              favorite team more heavily in the results.
+            </Text>
+          </View>
+
+          <Picker
+            selectedValue={this.state.favTeam}
+            onValueChange={teamName => {
+              this.setState({ favTeam: teamName })
+            }}
+            promt="Select Favorite Team"
+          >
+            <Picker.Item label="Select a Team" value="" />
+            {NBATeams.map(team => {
+              return (
+                <Picker.Item
+                  label={team}
+                  value={team}
+                  key={NBATeams.indexOf(team)}
+                />
+              )
+            })}
+          </Picker>
         </ScrollView>
       </View>
     )
