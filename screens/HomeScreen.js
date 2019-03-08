@@ -32,22 +32,33 @@ export default class HomeScreen extends React.Component {
   DO NOT DELETE
   */
 
-    fetch(
-      'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
-      {
-        method: 'GET',
-        headers: {
-          'X-RapidAPI-Key': SamsKey,
-        },
-      }
-    )
-      .then(res => {
-        return res.json()
-      })
-      .then(resJSON => {
-        //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
-        this.setState({ allGamesData: resJSON.events })
-      })
+    // fetch(
+    //   'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
+    //   {
+    //     method: 'GET',
+    //     headers: {
+    //       'X-RapidAPI-Key': SamsKey,
+    //     },
+    //   }
+    // )
+    //   .then(res => {
+    //     return res.json()
+    //   })
+    //   .then(resJSON => {
+    //     let today = new Date()
+    //     let tomorrow = new Date()
+    //     tomorrow.setDate(today.getDate() + 1)
+    //     let filtered = resJSON.events.filter(event => {
+    //       return (
+    //         Date.parse(event.event_date.slice(0, 10)) < Date.parse(tomorrow)
+    //       )
+    //     })
+    //     //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
+    //     return filtered
+    //   })
+    //   .then(filtered => {
+    //     this.setState({ allGamesData: filtered })
+    //   })
 
     /* 
   Below here is for testing using dummy data
@@ -57,7 +68,7 @@ export default class HomeScreen extends React.Component {
   dOnT TeLl Me WhAt To Do
   */
 
-    // this.setState({ allGamesData: data.events })
+    this.setState({ allGamesData: data.events })
   }
 
   bubbleSort(arr) {
@@ -107,7 +118,6 @@ export default class HomeScreen extends React.Component {
     }
 
     let sorted = this.bubbleSort(teamsAndSpreads)
-    console.log(sorted)
     this.setState({
       bestGame: sorted.shift(),
       otherGames: [...sorted],
@@ -115,7 +125,6 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
-    console.log('BEST GAME', this.state.bestGame)
     return (
       <View style={styles.container}>
         <ScrollView
