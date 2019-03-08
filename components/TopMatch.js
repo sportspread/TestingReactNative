@@ -8,6 +8,15 @@ import data from "../constants/dopestatz";
 const remote = "https://s15.postimg.org/tw2qkvmcb/400px.png";
 
 export const TopMatch = props => {
+  let home;
+  let away;
+  if (props.bestGame.teams[0].isAway === true) {
+    away = props.bestGame.teams[0];
+    home = props.bestGame.teams[1];
+  } else {
+    away = props.bestGame.teams[1];
+    home = props.bestGame.teams[0];
+  }
   return (
     <View>
       <Card>
@@ -15,10 +24,12 @@ export const TopMatch = props => {
         <Text> Tonight's Top Game is:</Text>
         <Text>
           {props.bestGame !== undefined
-            ? `${props.bestGame.teams[0]} vs ${props.bestGame.teams[1]}`
+            ? `${away.name} @ ${home.name}`
             : "No Games Found"}
         </Text>
       </Card>
     </View>
   );
 };
+
+export default TopMatch;
