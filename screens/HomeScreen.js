@@ -30,6 +30,12 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
+    /* 
+  Below here is for using our API call
+
+  DO NOT DELETE
+  */
+
     // fetch(
     //   'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
     //   {
@@ -47,7 +53,11 @@ export default class HomeScreen extends React.Component {
     //     this.setState({ allGamesData: resJSON.events })
     //   })
 
-    // This is for testing using dummy data VVVVVV
+    /* 
+  Below here is for testing using dummy data
+
+  DO NOT DELETE
+  */
 
     this.setState({ allGamesData: data.events })
   }
@@ -115,7 +125,6 @@ export default class HomeScreen extends React.Component {
                 {this.state.otherGames !== undefined &&
                 this.state.otherGames.length !== 0
                   ? this.state.otherGames.map(game => {
-                      console.log(game)
                       return (
                         <OtherGames key={game.teams[0].name} otherGame={game} />
                       )
