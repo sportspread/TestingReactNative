@@ -30,26 +30,26 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    fetch(
-      'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
-      {
-        method: 'GET',
-        headers: {
-          'X-RapidAPI-Key': SamsKey,
-        },
-      }
-    )
-      .then(res => {
-        return res.json()
-      })
-      .then(resJSON => {
-        //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
-        this.setState({ allGamesData: resJSON.events })
-      })
+    // fetch(
+    //   'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
+    //   {
+    //     method: 'GET',
+    //     headers: {
+    //       'X-RapidAPI-Key': SamsKey,
+    //     },
+    //   }cl
+    // )
+    //   .then(res => {
+    //     return res.json()
+    //   })
+    //   .then(resJSON => {
+    //     //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
+    //     this.setState({ allGamesData: resJSON.events })
+    //   })
 
     // This is for testing using dummy data VVVVVV
 
-    // this.setState({ allGamesData: data.events })
+    this.setState({ allGamesData: data.events })
   }
 
   bubbleSort(arr) {
@@ -75,7 +75,7 @@ export default class HomeScreen extends React.Component {
     let teamsAndSpreads = allGamesData.map(event => {
       return {
         teams: event.teams.map(team => {
-          return team.name
+          return { name: team.name, isAway: team.is_away, isHome: team.is_home }
         }),
         spread:
           event.lines[1].spread.point_spread_home > 0
@@ -106,8 +106,8 @@ export default class HomeScreen extends React.Component {
               <Text style={styles.teams}>
                 {this.state.bestGame.teams !== undefined &&
                 this.state.bestGame.teams.length !== 0
-                  ? `Team A:${this.state.bestGame.teams[0]} Team B: ${
-                      this.state.bestGame.teams[1]
+                  ? `Team A:${this.state.bestGame.teams[0].name} Team B: ${
+                      this.state.bestGame.teams[1].name
                     }`
                   : 'Press button to get games'}
               </Text>
@@ -115,7 +115,10 @@ export default class HomeScreen extends React.Component {
                 {this.state.otherGames !== undefined &&
                 this.state.otherGames.length !== 0
                   ? this.state.otherGames.map(game => {
-                      return <OtherGames key={game.teams[0]} otherGame={game} />
+                      console.log(game)
+                      return (
+                        <OtherGames key={game.teams[0].name} otherGame={game} />
+                      )
                     })
                   : ''}
               </Text>
