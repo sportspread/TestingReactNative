@@ -35,7 +35,7 @@ export default class HomeScreen extends React.Component {
       {
         method: "GET",
         headers: {
-          "X-RapidAPI-Key": "cca1dc9064mshca4afa3c2a7c913p1ee48djsn3e71d9a9afa8"
+          "X-RapidAPI-Key": Kyleskey
         }
       }
     )
