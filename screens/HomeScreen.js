@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 import {
   Image,
   Platform,
@@ -7,147 +7,153 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Button
-} from "react-native";
-import { WebBrowser } from "expo";
-import { MonoText } from "../components/StyledText";
-import data from "../constants/dopestatz";
-import { Kyleskey, SamsKey } from "../secrets.js";
+  Button,
+} from 'react-native'
+import { WebBrowser } from 'expo'
+import { MonoText } from '../components/StyledText'
+import data from '../constants/dopestatz'
+import { Kyleskey, SamsKey } from '../secrets.js'
+import OtherGames from '../components/OtherGames'
 export default class HomeScreen extends React.Component {
   constructor() {
-    super();
+    super()
     this.state = {
-      ball: []
-    };
+      allGamesData: [],
+      bestGame: {},
+      otherGames: [],
+    }
     // this.loadGames = this.loadGames.bind(this)
-    this.getGames = this.getGames.bind(this);
+    this.getGames = this.getGames.bind(this)
   }
   static navigationOptions = {
-    header: null
-  };
+    header: null,
+  }
 
   // Kyles Key = cca1dc9064mshca4afa3c2a7c913p1ee48djsn3e71d9a9afa8
   // Sams Key = eb3aa29c30mshe3fcb151bf70b80p1d39ccjsn13eb2939026b
 
-  componentWillMount() {
-    fetch(
-      "https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods",
-      {
-        method: "GET",
-        headers: {
-          "X-RapidAPI-Key": Kyleskey
+  componentDidMount() {
+    // fetch(
+    //   "https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods",
+    //   {
+    //     method: "GET",
+    //     headers: {
+    //       "X-RapidAPI-Key": "cca1dc9064mshca4afa3c2a7c913p1ee48djsn3e71d9a9afa8"
+    //     }
+    //   }
+    // )
+    //   .then(res => {
+    //     return res.json();
+    //   })
+    //   .then(resJSON => {
+    //     //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
+    //     this.setState({ allGames: resJSON.events });
+    //   });
+    this.setState({ allGamesData: data.events })
+  }
+
+  bubbleSort(arr) {
+    let length = arr.length
+    let swapped
+    do {
+      swapped = false
+      for (let i = 0; i < length; i++) {
+        if (arr[i + 1] === undefined) break
+        if (arr[i].spread > arr[i + 1].spread) {
+          let temp = arr[i]
+          arr[i] = arr[i + 1]
+          arr[i + 1] = temp
+          swapped = true
         }
       }
-    )
-      .then(res => {
-        return res.json();
-      })
-      .then(resJSON => {
-        this.setState({ ball: resJSON.events });
-      });
+    } while (swapped)
+    return arr
   }
 
   getGames() {
-    console.log(this.state);
-    const gameData = this.state.ball;
-    let teamsAndSpreads = gameData.map(event => {
+    const { allGamesData } = this.state
+    let teamsAndSpreads = allGamesData.map(event => {
       return {
         teams: event.teams.map(team => {
-          return team.name;
+          return team.name
         }),
         spread:
           event.lines[1].spread.point_spread_home > 0
             ? event.lines[1].spread.point_spread_home
-            : event.lines[1].spread.point_spread_home * -1
-      };
-    });
-    let length = teamsAndSpreads.length;
-    for (let i = 0; i < length; i++) {
-      for (let j = 0; j < length - i - 1; j++) {
-        if (teamsAndSpreads[j].spread > teamsAndSpreads[j + 1].spread) {
-          let temp = teamsAndSpreads[j];
-          teamsAndSpreads[j] = teamsAndSpreads[j + 1];
-          teamsAndSpreads[j + 1] = temp;
-        }
+            : event.lines[1].spread.point_spread_home * -1,
       }
-      console.log(teamsAndSpreads[0]);
-      return teamsAndSpreads[0];
-    }
+    })
+    let sorted = this.bubbleSort(teamsAndSpreads)
+    // for (let i = 0; i < length; i++) {
+    //   for (let j = 0; j < length; j++) {
+    //     if (teamsAndSpreads[j + 1] === undefined) break
+    //     if (teamsAndSpreads[j].spread > teamsAndSpreads[j + 1].spread) {
+    //       let temp = teamsAndSpreads[j]
+    //       teamsAndSpreads[j] = teamsAndSpreads[j + 1]
+    //       teamsAndSpreads[j + 1] = temp
+    //     }
+    //   }
+
+    // let sorted = teamsAndSpreads.reduce((acc, game) => {
+    //   let lowest = undefined
+    //   if (lowest === undefined) {
+    //     lowest = game.spread
+    //   }
+    //   if (game.spread <= lowest) {
+    //     return [...acc, game]
+    //   }
+    // }, [])
+    console.log(sorted)
+    this.setState({
+      bestGame: sorted.shift(),
+      otherGames: [...sorted],
+    })
   }
 
   render() {
-    console.log("this.state.ball", this.state.ball);
     return (
       <View style={styles.container}>
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          {/* <View style={styles.welcomeContainer}>
-            <Image
-              source={
-                __DEV__
-                  ? require("../assets/images/robot-dev.png")
-                  : require("../assets/images/robot-prod.png")
-              }
-              style={styles.welcomeImage}
-            />
-          </View> */}
-          <View>
-            <Text style={styles.teams}>
-              {this.state.bestGame !== undefined
-                ? `Team A:${this.state.bestGame.teams[0]} Team B: ${
-                    this.state.bestGame.teams[1]
-                  }`
-                : "No Games Found"}
-            </Text>
-          </View>
+          {this.state.bestGame === {} ? (
+            <View style={styles.getStartedContainer}>
+              <Text>Press button to get games</Text>
+            </View>
+          ) : (
+            <View>
+              <Text style={styles.teams}>
+                {this.state.bestGame.teams !== undefined &&
+                this.state.bestGame.teams.length !== 0
+                  ? `Team A:${this.state.bestGame.teams[0]} Team B: ${
+                      this.state.bestGame.teams[1]
+                    }`
+                  : 'Press button to get games'}
+              </Text>
+              <Text>
+                {this.state.otherGames !== undefined &&
+                this.state.otherGames.length !== 0
+                  ? this.state.otherGames.map(game => {
+                      return <OtherGames key={game.teams[0]} otherGame={game} />
+                    })
+                  : ''}
+              </Text>
+            </View>
+          )}
+
           <View style={styles.getStartedContainer}>
-            {/* {this._maybeRenderDevelopmentModeWarning()} */}
-
             <Text style={styles.getStartedText}>{this.state.test}</Text>
-
-            {/* <View
-              style={[styles.codeHighlightContainer, styles.homeScreenFilename]}
-            >
-              <MonoText style={styles.codeHighlightText}>
-                screens/HomeScreen.js
-              </MonoText>
-            </View> */}
 
             <Text style={styles.getStartedText}>
               Press this button to see todays top games!
             </Text>
-            {/* <Button title="LOADGAMES" onPress={this.loadGames} /> */}
 
-            <Button title="GETGAMES" onPress={this.getGames} />
-          </View>
-
-          <View style={styles.helpContainer}>
-            <TouchableOpacity
-              onPress={this._handleHelpPress}
-              style={styles.helpLink}
-            >
-              <Text style={styles.helpLinkText}>
-                Help, it didn’t automatically reload!
-              </Text>
-            </TouchableOpacity>
+            <Button title="Show Me YA MOVES" onPress={this.getGames} />
           </View>
         </ScrollView>
-
-        <View style={styles.tabBarInfoContainer}>
-          {/* <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text> */}
-
-          <View
-            style={[styles.codeHighlightContainer, styles.navigationFilename]}
-          >
-            <MonoText style={styles.codeHighlightText}>
-              navigation/MainTabNavigator.js
-            </MonoText>
-          </View>
-        </View>
       </View>
-    );
+    )
   }
 
   _maybeRenderDevelopmentModeWarning() {
@@ -156,125 +162,125 @@ export default class HomeScreen extends React.Component {
         <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
           Learn more
         </Text>
-      );
+      )
 
       return (
         <Text style={styles.developmentModeText}>
           Development mode is enabled, your app will be slower but you can use
           useful development tools. {learnMoreButton}
         </Text>
-      );
+      )
     } else {
       return (
         <Text style={styles.developmentModeText}>
           You are not in development mode, your app will run at full speed.
         </Text>
-      );
+      )
     }
   }
 
   _handleLearnMorePress = () => {
     WebBrowser.openBrowserAsync(
-      "https://docs.expo.io/versions/latest/guides/development-mode"
-    );
-  };
+      'https://docs.expo.io/versions/latest/guides/development-mode'
+    )
+  }
 
   _handleHelpPress = () => {
     WebBrowser.openBrowserAsync(
-      "https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes"
-    );
-  };
+      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
+    )
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: '#fff',
   },
   developmentModeText: {
     marginBottom: 20,
-    color: "rgba(0,0,0,0.4)",
+    color: 'rgba(0,0,0,0.4)',
     fontSize: 14,
     lineHeight: 19,
-    textAlign: "center"
+    textAlign: 'center',
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   welcomeContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   welcomeImage: {
     width: 100,
     height: 80,
-    resizeMode: "contain",
+    resizeMode: 'contain',
     marginTop: 3,
-    marginLeft: -10
+    marginLeft: -10,
   },
   getStartedContainer: {
-    alignItems: "center",
-    marginHorizontal: 50
+    alignItems: 'center',
+    marginHorizontal: 50,
   },
   homeScreenFilename: {
-    marginVertical: 7
+    marginVertical: 7,
   },
   codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
+    color: 'rgba(96,100,109, 0.8)',
   },
   codeHighlightContainer: {
-    backgroundColor: "rgba(0,0,0,0.05)",
+    backgroundColor: 'rgba(0,0,0,0.05)',
     borderRadius: 3,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   getStartedText: {
     fontSize: 17,
-    color: "rgba(96,100,109, 1)",
+    color: 'rgba(96,100,109, 1)',
     lineHeight: 24,
-    textAlign: "center"
+    textAlign: 'center',
   },
   tabBarInfoContainer: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     ...Platform.select({
       ios: {
-        shadowColor: "black",
+        shadowColor: 'black',
         shadowOffset: { height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3
+        shadowRadius: 3,
       },
       android: {
-        elevation: 20
-      }
+        elevation: 20,
+      },
     }),
-    alignItems: "center",
-    backgroundColor: "#fbfbfb",
-    paddingVertical: 20
+    alignItems: 'center',
+    backgroundColor: '#fbfbfb',
+    paddingVertical: 20,
   },
   tabBarInfoText: {
     fontSize: 17,
-    color: "rgba(96,100,109, 1)",
-    textAlign: "center"
+    color: 'rgba(96,100,109, 1)',
+    textAlign: 'center',
   },
   navigationFilename: {
-    marginTop: 5
+    marginTop: 5,
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: "center"
+    alignItems: 'center',
   },
   helpLink: {
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   helpLinkText: {
     fontSize: 14,
-    color: "#2e78b7"
+    color: '#2e78b7',
   },
   teams: {
     fontSize: 25,
-    fontWeight: "bold"
-  }
-});
+    fontWeight: 'bold',
+  },
+})
