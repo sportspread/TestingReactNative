@@ -8,7 +8,7 @@ export const OtherGames = props => {
     <Text>
       {' '}
       {props.otherGame !== undefined
-        ? `${props.otherGame.teams[0]} vs ${props.otherGame.teams[1]}`
+        ? `${props.otherGame.teams[0].name} vs ${props.otherGame.teams[1].name}`
         : 'No Games Found'}{' '}
     </Text>
   )
