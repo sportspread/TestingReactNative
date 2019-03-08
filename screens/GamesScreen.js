@@ -9,122 +9,52 @@ import {
   TouchableOpacity,
   View,
   Button,
+  Picker,
 } from 'react-native'
 import data from '../constants/dopestatz'
 import { WebBrowser } from 'expo'
 import { MonoText } from '../components/StyledText'
 import { TopMatch } from '../components/TopMatch.js'
 import { OtherGames } from '../components/OtherGames.js'
+import { NBATeams, NBALogos } from '../teamsAlphabetical'
 
 export default class GamesScreen extends React.Component {
   constructor() {
     super()
     this.state = {
-      allGamesData: [],
-      bestGame: {},
-      otherGames: [],
+      favTeam: '',
     }
   }
 
   static navigationOptions = {
     header: null,
   }
-
-  // getGames() {
-  //   const gameData = this.state.ball;
-  //   let teamsAndSpreads = gameData.map(event => {
-  //     return {
-  //       teams: event.teams.map(team => {
-  //         return team.name;
-  //       }),
-  //       spread:
-  //         event.lines[1].spread.point_spread_home > 0
-  //           ? event.lines[1].spread.point_spread_home
-  //           : event.lines[1].spread.point_spread_home * -1
-  //     };
-  //   });
-  //   let length = teamsAndSpreads.length;
-  //   for (let i = 0; i < length; i++) {
-  //     for (let j = 0; j < length - i - 1; j++) {
-  //       if (teamsAndSpreads[j].spread > teamsAndSpreads[j + 1].spread) {
-  //         let temp = teamsAndSpreads[j];
-  //         teamsAndSpreads[j] = teamsAndSpreads[j + 1];
-  //         teamsAndSpreads[j + 1] = temp;
-  //       }
-  //     }
-  //     console.log(teamsAndSpreads[0]);
-  //     return teamsAndSpreads[0];
-  //   }
-  // }
-
-  componentDidMount() {
-    // fetch(
-    //   "https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods",
-    //   {
-    //     method: "GET",
-    //     headers: {
-    //       "X-RapidAPI-Key": "cca1dc9064mshca4afa3c2a7c913p1ee48djsn3e71d9a9afa8"
-    //     }
-    //   }
-    // )
-    //   .then(res => {
-    //     return res.json();
-    //   })
-    //   .then(resJSON => {
-    //     //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
-    //     this.setState({ allGames: resJSON.events });
-    //   });
-    this.setState({ allGamesData: data.events })
-  }
-
-  getGames() {
-    let teamsAndSpreads = allGamesData.map(event => {
-      return {
-        teams: event.teams.map(team => {
-          return team.name
-        }),
-        spread:
-          event.lines[1].spread.point_spread_home > 0
-            ? event.lines[1].spread.point_spread_home
-            : event.lines[1].spread.point_spread_home * -1,
-      }
-    })
-    let length = teamsAndSpreads.length
-    for (let i = 0; i < length; i++) {
-      for (let j = 0; j < length - i - 1; j++) {
-        if (teamsAndSpreads[j].spread > teamsAndSpreads[j + 1].spread) {
-          let temp = teamsAndSpreads[j]
-          teamsAndSpreads[j] = teamsAndSpreads[j + 1]
-          teamsAndSpreads[j + 1] = temp
-        }
-      }
-    }
-    this.setState({
-      bestGame: teamsAndSpreads[0],
-      otherGames: [teamsAndSpreads[0]],
-    })
-    return teamsAndSpreads[0]
-  }
-
-  componentWillMount() {
-    this.getGames()
-  }
-
   render() {
     return (
-      <View style={styles.container}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
+      <View>
+        <Text>Here's Some Text</Text>
+        <Picker
+          selectedValue={this.state.favTeam}
+          onValueChange={teamName => {
+            this.setState({ favTeam: teamName })
+          }}
+          promt="Select Favorite Team"
         >
-          <TopMatch bestGame={this.state.bestGame} />
-          {this.state.otherGames.map(game => {
-            return <OtherGames key={game.teams[0]} otherGame={game} />
+          <Picker.Item label="Please Select a Team" value="" />
+          {NBATeams.map(team => {
+            return (
+              <Picker.Item
+                label={team}
+                value={team}
+                key={NBATeams.indexOf(team)}
+              />
+            )
           })}
-        </ScrollView>
-
-        <View
-          style={[styles.codeHighlightContainer, styles.navigationFilename]}
+        </Picker>
+        <Image
+          style={{ flex: 1, height: undefined, width: undefined }}
+          source={{ uri: NBALogos[NBATeams.indexOf(this.state.favTeam)] }}
+          resizeMode="contain"
         />
       </View>
     )

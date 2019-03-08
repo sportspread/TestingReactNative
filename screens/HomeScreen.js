@@ -23,6 +23,12 @@ export default class HomeScreen extends React.Component {
   };
 
   componentDidMount() {
+    /* 
+  Below here is for using our API call
+
+  DO NOT DELETE
+  */
+
     // fetch(
     //   'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
     //   {
@@ -40,7 +46,13 @@ export default class HomeScreen extends React.Component {
     //     this.setState({ allGamesData: resJSON.events })
     //   })
 
-    // This is for testing using dummy data VVVVVV
+    /* 
+  Below here is for testing using dummy data
+
+  DO NOT DELETE
+
+  dOnT TeLl Me WhAt To Do
+  */
 
     this.setState({ allGamesData: data.events });
   }
@@ -95,13 +107,6 @@ export default class HomeScreen extends React.Component {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          <View style={styles.getStartedContainer}>
-            <Text style={styles.getStartedText}>
-              Press this button to see todays top games!
-            </Text>
-            <Button title="Show Me YA MOVES" onPress={this.getGames} />
-          </View>
-
           {this.state.bestGame === {} ? (
             ""
           ) : (
@@ -117,7 +122,6 @@ export default class HomeScreen extends React.Component {
                 {this.state.otherGames !== undefined &&
                 this.state.otherGames.length !== 0
                   ? this.state.otherGames.map(game => {
-                      // console.log(game);
                       return (
                         <OtherGames key={game.teams[0].name} otherGame={game} />
                       );
@@ -126,6 +130,9 @@ export default class HomeScreen extends React.Component {
               </Text>
             </View>
           )}
+          <View style={styles.getStartedContainer}>
+            <Button title="Load Games" onPress={this.getGames} />
+          </View>
         </ScrollView>
       </View>
     );
