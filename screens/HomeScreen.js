@@ -1,27 +1,20 @@
 import React from 'react'
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Button,
-  Picker,
-} from 'react-native'
+import { Platform, ScrollView, StyleSheet, View, Picker } from 'react-native'
+import { Image, Text, Card, Button } from 'react-native-elements'
 import { WebBrowser } from 'expo'
 import { MonoText } from '../components/StyledText'
 import data from '../constants/dopestatz'
 import { KylesKey, SamsKey } from '../secrets.js'
 import OtherGames from '../components/OtherGames'
+import TopMatch from '../components/TopMatch.js'
 import { NBATeams, NBALogos } from '../teamsAlphabetical'
+
 export default class HomeScreen extends React.Component {
   constructor() {
     super()
     this.state = {
       allGamesData: [],
-      bestGame: {},
+      bestGame: [],
       otherGames: [],
       favTeam: '',
     }
@@ -39,30 +32,32 @@ export default class HomeScreen extends React.Component {
   DO NOT DELETE
   */
 
-    // fetch(
-    //   'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
-    //   {
-    //     method: 'GET',
-    //     headers: {
-    //       'X-RapidAPI-Key': SamsKey,
-    //     },
-    //   }cl
-    // )
-    //   .then(res => {
-    //     return res.json()
-    //   })
-    //   .then(resJSON => {
-    //     //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
-    //     this.setState({ allGamesData: resJSON.events })
-    //   })
+    fetch(
+      'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
+      {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key': SamsKey,
+        },
+      }
+    )
+      .then(res => {
+        return res.json()
+      })
+      .then(resJSON => {
+        //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
+        this.setState({ allGamesData: resJSON.events })
+      })
 
     /* 
   Below here is for testing using dummy data
 
   DO NOT DELETE
+
+  dOnT TeLl Me WhAt To Do
   */
 
-    this.setState({ allGamesData: data.events })
+    // this.setState({ allGamesData: data.events })
   }
 
   bubbleSort(arr) {
@@ -88,7 +83,11 @@ export default class HomeScreen extends React.Component {
     let teamsAndSpreads = allGamesData.map(event => {
       return {
         teams: event.teams.map(team => {
-          return { name: team.name, isAway: team.is_away, isHome: team.is_home }
+          return {
+            name: team.name,
+            isAway: team.is_away,
+            isHome: team.is_home,
+          }
         }),
         spread:
           event.lines[1].spread.point_spread_home > 0
@@ -116,6 +115,7 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
+    console.log('BEST GAME', this.state.bestGame)
     return (
       <View style={styles.container}>
         <ScrollView
@@ -123,19 +123,16 @@ export default class HomeScreen extends React.Component {
           contentContainerStyle={styles.contentContainer}
         >
           {this.state.bestGame === {} ? (
-            <View style={styles.getStartedContainer}>
-              <Text>Press button to get games</Text>
-            </View>
+            ''
           ) : (
             <View>
-              <Text style={styles.teams}>
-                {this.state.bestGame.teams !== undefined &&
-                this.state.bestGame.teams.length !== 0
-                  ? `Team A:${this.state.bestGame.teams[0].name} Team B: ${
-                      this.state.bestGame.teams[1].name
-                    }`
-                  : 'Press button to get games'}
-              </Text>
+              {this.state.bestGame.teams !== undefined &&
+              this.state.bestGame.teams.length !== 0 ? (
+                <TopMatch bestGame={this.state.bestGame} />
+              ) : (
+                <Text style={styles.teams}>"No games"</Text>
+              )}
+
               <Text>
                 {this.state.otherGames !== undefined &&
                 this.state.otherGames.length !== 0
@@ -148,15 +145,8 @@ export default class HomeScreen extends React.Component {
               </Text>
             </View>
           )}
-
           <View style={styles.getStartedContainer}>
-            <Text style={styles.getStartedText}>{this.state.test}</Text>
-
-            <Text style={styles.getStartedText}>
-              Press this button to see todays top games!
-            </Text>
-
-            <Button title="Show Me YA MOVES" onPress={this.getGames} />
+            <Button title="Load Games" onPress={this.getGames} />
           </View>
 
           <View>
@@ -186,41 +176,6 @@ export default class HomeScreen extends React.Component {
           </Picker>
         </ScrollView>
       </View>
-    )
-  }
-
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      )
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use
-          useful development tools. {learnMoreButton}
-        </Text>
-      )
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      )
-    }
-  }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/development-mode'
-    )
-  }
-
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
     )
   }
 }
