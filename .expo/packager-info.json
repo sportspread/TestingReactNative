@@ -1,9 +1,9 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": 19000,
-  "packagerPort": 19003,
-  "packagerPid": 45639,
-  "expoServerNgrokUrl": "https://5w-5cs.anonymous.testingreactnative.exp.direct",
-  "packagerNgrokUrl": "https://packager.5w-5cs.anonymous.testingreactnative.exp.direct",
-  "ngrokPid": 45651
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null
 }
