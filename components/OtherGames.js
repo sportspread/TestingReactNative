@@ -1,42 +1,43 @@
-import React from "react";
-import { View } from "react-native";
-import { WebBrowser } from "expo";
-import { Card, Text, Image } from "react-native-elements";
-import { NBATeams, NBALogos } from "../teamsAlphabetical.js";
+import React from 'react'
+import { View } from 'react-native'
+import { WebBrowser } from 'expo'
+import { Card, Text, Image } from 'react-native-elements'
+import { NBATeams, NBALogos } from '../teamsAlphabetical.js'
+import FadeInView from '../screens/FadeInView'
 export const OtherGames = props => {
-  let home;
-  let away;
+  let home
+  let away
   if (props.bestGame.teams[0].isAway === true) {
-    away = props.otherGame.teams[0];
-    home = props.otherGame.teams[1];
+    away = props.otherGame.teams[0]
+    home = props.otherGame.teams[1]
   } else {
-    away = props.otherGame.teams[1];
-    home = props.otherGame.teams[0];
+    away = props.otherGame.teams[1]
+    home = props.otherGame.teams[0]
   }
-  const homeImage = NBALogos[NBATeams.indexOf(home.name)];
-  const awayImage = NBALogos[NBATeams.indexOf(away.name)];
+  const homeImage = NBALogos[NBATeams.indexOf(home.name)]
+  const awayImage = NBALogos[NBATeams.indexOf(away.name)]
 
   return (
-    <Card style={{ backgroundColor: "#4286f4" }}>
+    <Card style={{ backgroundColor: '#4286f4' }}>
       {props.bestGame !== undefined && props.bestGame.teams.length !== 0 ? (
-        <View
-          style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}
+        <FadeInView
+          style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}
         >
           <View>
             <Image
               style={{
                 width: 50,
                 height: 50,
-                resizeMode: "contain",
-                paddingLeft: 100
+                resizeMode: 'contain',
+                paddingLeft: 100,
               }}
               source={{
-                uri: awayImage
+                uri: awayImage,
               }}
             />
           </View>
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
           >
             <Text h3> @ </Text>
           </View>
@@ -45,23 +46,23 @@ export const OtherGames = props => {
               style={{
                 width: 50,
                 height: 50,
-                resizeMode: "contain",
-                paddingRight: 100
+                resizeMode: 'contain',
+                paddingRight: 100,
               }}
               source={{
-                uri: homeImage
+                uri: homeImage,
               }}
             />
           </View>
-        </View>
+        </FadeInView>
       ) : (
         <Text>"No Games Found"</Text>
       )}
     </Card>
-  );
-};
+  )
+}
 
-export default OtherGames;
+export default OtherGames
 
 //Shades of gray (Light -> Dark (Best -> Worst))
 // TopGame
