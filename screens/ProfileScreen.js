@@ -1,5 +1,4 @@
 import React from "react";
-import { ThemeProvider } from "react-native-elements";
 import {
   Platform,
   ScrollView,
@@ -17,11 +16,6 @@ import {
   SocialIcon
 } from "react-native-elements";
 import ActionSheet from "react-native-actionsheet";
-import data from "../constants/dopestatz";
-import { WebBrowser } from "expo";
-import { MonoText } from "../components/StyledText";
-import { TopMatch } from "../components/TopMatch.js";
-import { OtherGames } from "../components/OtherGames.js";
 import { NBATeams, NBALogos } from "../teamsAlphabetical";
 const NBA = require("nba");
 
