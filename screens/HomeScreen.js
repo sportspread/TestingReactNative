@@ -1,30 +1,30 @@
-import React from 'react'
-import { Platform, ScrollView, StyleSheet, View, Picker } from 'react-native'
-import { Image, Text, Card, Button } from 'react-native-elements'
-import { WebBrowser } from 'expo'
-import { MonoText } from '../components/StyledText'
-import data from '../constants/dopestatz'
-import { KylesKey, SamsKey } from '../secrets.js'
-import OtherGames from '../components/OtherGames'
-import TopMatch from '../components/TopMatch.js'
-import { NBATeams, NBALogos } from '../teamsAlphabetical'
-import ActionSheet from 'react-native-actionsheet'
-import FadeInView from './FadeInView'
+import React from "react";
+import { Platform, ScrollView, StyleSheet, View, Picker } from "react-native";
+import { Image, Text, Card, Button } from "react-native-elements";
+import { WebBrowser } from "expo";
+import { MonoText } from "../components/StyledText";
+import data from "../constants/dopestatz";
+import { KylesKey, SamsKey } from "../secrets.js";
+import OtherGames from "../components/OtherGames";
+import TopMatch from "../components/TopMatch.js";
+import { NBATeams, NBALogos } from "../teamsAlphabetical";
+import ActionSheet from "react-native-actionsheet";
+import FadeInView from "./FadeInView";
 
 export default class HomeScreen extends React.Component {
   constructor() {
-    super()
+    super();
     this.state = {
       allGamesData: [],
       bestGame: [],
       otherGames: [],
-      favTeam: '',
-    }
-    this.getGames = this.getGames.bind(this)
+      favTeam: ""
+    };
+    this.getGames = this.getGames.bind(this);
   }
   static navigationOptions = {
-    header: null,
-  }
+    header: null
+  };
 
   componentDidMount() {
     /* 
@@ -67,64 +67,64 @@ export default class HomeScreen extends React.Component {
 
   dOnT TeLl Me WhAt To Do
   */
-    this.setState({ allGamesData: data.events })
+    this.setState({ allGamesData: data.events });
   }
 
   bubbleSort(arr) {
-    let length = arr.length
-    let swapped
+    let length = arr.length;
+    let swapped;
     do {
-      swapped = false
+      swapped = false;
       for (let i = 0; i < length; i++) {
-        if (arr[i + 1] === undefined) break
+        if (arr[i + 1] === undefined) break;
         if (arr[i].spread > arr[i + 1].spread) {
-          let temp = arr[i]
-          arr[i] = arr[i + 1]
-          arr[i + 1] = temp
-          swapped = true
+          let temp = arr[i];
+          arr[i] = arr[i + 1];
+          arr[i + 1] = temp;
+          swapped = true;
         }
       }
-    } while (swapped)
-    return arr
+    } while (swapped);
+    return arr;
   }
 
   getGames() {
-    const { allGamesData, favTeam } = this.state
+    const { allGamesData, favTeam } = this.state;
     let teamsAndSpreads = allGamesData.map(event => {
       return {
         teams: event.teams.map(team => {
           return {
             name: team.name,
             isAway: team.is_away,
-            isHome: team.is_home,
-          }
+            isHome: team.is_home
+          };
         }),
         spread:
           event.lines[1].spread.point_spread_home > 0
             ? event.lines[1].spread.point_spread_home
-            : event.lines[1].spread.point_spread_home * -1,
-      }
-    })
+            : event.lines[1].spread.point_spread_home * -1
+      };
+    });
 
     if (favTeam) {
       teamsAndSpreads.forEach(game => {
         game.teams.forEach(team => {
           if (team.name === favTeam) {
-            game.spread = game.spread - game.spread * 0.33
+            game.spread = game.spread - game.spread * 0.33;
           }
-        })
-      })
+        });
+      });
     }
 
-    let sorted = this.bubbleSort(teamsAndSpreads)
+    let sorted = this.bubbleSort(teamsAndSpreads);
     this.setState({
       bestGame: sorted.shift(),
-      otherGames: [...sorted],
-    })
+      otherGames: [...sorted]
+    });
   }
   showActionSheet = () => {
-    this.ActionSheet.show()
-  }
+    this.ActionSheet.show();
+  };
 
   render() {
     return (
@@ -134,7 +134,7 @@ export default class HomeScreen extends React.Component {
           contentContainerStyle={styles.contentContainer}
         >
           {this.state.bestGame === {} ? (
-            ''
+            ""
           ) : (
             <FadeInView>
               {this.state.bestGame.teams !== undefined &&
@@ -145,8 +145,8 @@ export default class HomeScreen extends React.Component {
                   <View
                     style={{
                       flex: 1,
-                      flexDirection: 'row',
-                      justifyContent: 'center',
+                      flexDirection: "row",
+                      justifyContent: "center"
                     }}
                   >
                     <Text h>No Games Found</Text>
@@ -159,13 +159,13 @@ export default class HomeScreen extends React.Component {
                 <FadeInView
                   style={{
                     flex: 1,
-                    flexDirection: 'row',
-                    justifyContent: 'center',
+                    flexDirection: "row",
+                    justifyContent: "center",
                     paddingTop: 20,
-                    paddingBottom: 15,
+                    paddingBottom: 15
                   }}
                 >
-                  <Text h3 style={{ fontWeight: 'bold' }}>
+                  <Text h3 style={{ fontWeight: "bold" }}>
                     Other Games
                   </Text>
                 </FadeInView>
@@ -180,7 +180,7 @@ export default class HomeScreen extends React.Component {
                         bestGame={this.state.bestGame}
                         otherGame={game}
                       />
-                    )
+                    );
                   })
                 ) : (
                   <Text />
@@ -198,11 +198,11 @@ export default class HomeScreen extends React.Component {
               favorite team more heavily in the results.
             </Text>
           </View>
-          {Platform.OS === 'android' ? (
+          {Platform.OS === "android" ? (
             <Picker
               selectedValue={this.state.favTeam}
               onValueChange={teamName => {
-                this.setState({ favTeam: teamName })
+                this.setState({ favTeam: teamName });
               }}
               promt="Select Favorite Team"
             >
@@ -214,58 +214,58 @@ export default class HomeScreen extends React.Component {
                     value={team}
                     key={NBATeams.indexOf(team)}
                   />
-                )
+                );
               })}
             </Picker>
           ) : (
             <View>
               <Card>
                 <Text onPress={this.showActionSheet}>
-                  {' '}
+                  {" "}
                   Pick Favorite Team: {this.state.favTeam}
                 </Text>
                 <ActionSheet
                   ref={o => (this.ActionSheet = o)}
-                  title={'Select Team'}
+                  title={"Select Team"}
                   options={[
-                    'Atlanta Hawks',
-                    'Boston Celtics',
-                    'Brooklyn Nets',
-                    'Charlotte Hornets',
-                    'Chicago Bulls',
-                    'Cleveland Cavaliers',
-                    'Dallas Mavericks',
-                    'Denver Nuggets',
-                    'Detroit Pistons',
-                    'Golden State Warriors',
-                    'Houston Rockets',
-                    'Indiana Pacers',
-                    'Los Angeles Clippers',
-                    'Los Angeles Lakers',
-                    'Memphis Grizzlies',
-                    'Miami Heat',
-                    'Milwaukee Bucks',
-                    'Minnesota Timberwolves',
-                    'New Orleans Pelicans',
-                    'New York Knicks',
-                    'Oklahoma City Thunder',
-                    'Orlando Magic',
-                    'Philadelphia 76ers',
-                    'Phoenix Suns',
-                    'Portland Trail Blazers',
-                    'Sacramento Kings',
-                    'San Antonio Spurs',
-                    'Toronto Raptors',
-                    'Utah Jazz',
-                    'Washington Wizards',
-                    'Cancel',
+                    "Atlanta Hawks",
+                    "Boston Celtics",
+                    "Brooklyn Nets",
+                    "Charlotte Hornets",
+                    "Chicago Bulls",
+                    "Cleveland Cavaliers",
+                    "Dallas Mavericks",
+                    "Denver Nuggets",
+                    "Detroit Pistons",
+                    "Golden State Warriors",
+                    "Houston Rockets",
+                    "Indiana Pacers",
+                    "Los Angeles Clippers",
+                    "Los Angeles Lakers",
+                    "Memphis Grizzlies",
+                    "Miami Heat",
+                    "Milwaukee Bucks",
+                    "Minnesota Timberwolves",
+                    "New Orleans Pelicans",
+                    "New York Knicks",
+                    "Oklahoma City Thunder",
+                    "Orlando Magic",
+                    "Philadelphia 76ers",
+                    "Phoenix Suns",
+                    "Portland Trail Blazers",
+                    "Sacramento Kings",
+                    "San Antonio Spurs",
+                    "Toronto Raptors",
+                    "Utah Jazz",
+                    "Washington Wizards",
+                    "Cancel"
                   ]}
                   cancelButtonIndex={37}
                   destructiveButtonIndex={37}
                   onPress={index => {
                     this.setState({
-                      favTeam: NBATeams[index],
-                    })
+                      favTeam: NBATeams[index]
+                    });
                   }}
                 />
               </Card>
@@ -273,99 +273,99 @@ export default class HomeScreen extends React.Component {
           )}
         </ScrollView>
       </View>
-    )
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff"
   },
   developmentModeText: {
     marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
+    color: "rgba(0,0,0,0.4)",
     fontSize: 14,
     lineHeight: 19,
-    textAlign: 'center',
+    textAlign: "center"
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 30
   },
   welcomeContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 20
   },
   welcomeImage: {
     width: 100,
     height: 80,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     marginTop: 3,
-    marginLeft: -10,
+    marginLeft: -10
   },
   getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
+    alignItems: "center",
+    marginHorizontal: 50
   },
   homeScreenFilename: {
-    marginVertical: 7,
+    marginVertical: 7
   },
   codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
+    color: "rgba(96,100,109, 0.8)"
   },
   codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
+    backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 3,
-    paddingHorizontal: 4,
+    paddingHorizontal: 4
   },
   getStartedText: {
     fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
+    color: "rgba(96,100,109, 1)",
     lineHeight: 24,
-    textAlign: 'center',
+    textAlign: "center"
   },
   tabBarInfoContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     ...Platform.select({
       ios: {
-        shadowColor: 'black',
+        shadowColor: "black",
         shadowOffset: { height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowRadius: 3
       },
       android: {
-        elevation: 20,
-      },
+        elevation: 20
+      }
     }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
+    alignItems: "center",
+    backgroundColor: "#fbfbfb",
+    paddingVertical: 20
   },
   tabBarInfoText: {
     fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
+    color: "rgba(96,100,109, 1)",
+    textAlign: "center"
   },
   navigationFilename: {
-    marginTop: 5,
+    marginTop: 5
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: 'center',
+    alignItems: "center"
   },
   helpLink: {
-    paddingVertical: 15,
+    paddingVertical: 15
   },
   helpLinkText: {
     fontSize: 14,
-    color: '#2e78b7',
+    color: "#2e78b7"
   },
   teams: {
     fontSize: 25,
-    fontWeight: 'bold',
-  },
-})
+    fontWeight: "bold"
+  }
+});
