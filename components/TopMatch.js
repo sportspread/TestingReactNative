@@ -5,7 +5,6 @@ import { Text, Card, Image } from "react-native-elements";
 import { MonoText } from "../components/StyledText";
 import data from "../constants/dopestatz";
 import { NBATeams, NBALogos } from "../teamsAlphabetical.js";
-const remote = "https://s15.postimg.org/tw2qkvmcb/400px.png";
 
 export const TopMatch = props => {
   let home;
