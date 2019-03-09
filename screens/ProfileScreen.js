@@ -35,7 +35,6 @@ export default class ProfileScreen extends React.Component {
       text: ""
     };
     this.findPlayer = this.findPlayer.bind(this);
-    // this.handleChange = this.handleChange.bind(this);
   }
 
   static navigationOptions = {
@@ -46,11 +45,17 @@ export default class ProfileScreen extends React.Component {
   };
 
   findPlayer() {
-    const player = NBA.findPlayer(`${this.state.text}`);
-    console.log(player);
-    this.setState({
-      favPlayer: player.fullName
-    });
+    let sanitizedPlayer = this.state.text.toLowerCase().trim();
+    const player = NBA.findPlayer(sanitizedPlayer);
+    if (player !== undefined) {
+      this.setState({
+        favPlayer: player.fullName
+      });
+    } else {
+      this.setState({
+        text: "Please Enter a Valid Player Name"
+      });
+    }
   }
 
   render() {
@@ -183,7 +188,7 @@ export default class ProfileScreen extends React.Component {
             ]}
           >
             <Button
-              onPress={() => this.findPlayer(this.state.text)}
+              onPress={this.findPlayer}
               title="Set Player"
               color="#90A4AE"
             />
