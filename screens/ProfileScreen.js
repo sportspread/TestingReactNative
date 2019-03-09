@@ -1,6 +1,13 @@
 import React from "react";
 import { ThemeProvider } from "react-native-elements";
-import { Platform, ScrollView, StyleSheet, View, Picker } from "react-native";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+  Picker,
+  TextInput
+} from "react-native";
 import {
   Image,
   Text,
@@ -10,13 +17,13 @@ import {
   SocialIcon
 } from "react-native-elements";
 import ActionSheet from "react-native-actionsheet";
-
 import data from "../constants/dopestatz";
 import { WebBrowser } from "expo";
 import { MonoText } from "../components/StyledText";
 import { TopMatch } from "../components/TopMatch.js";
 import { OtherGames } from "../components/OtherGames.js";
 import { NBATeams, NBALogos } from "../teamsAlphabetical";
+const NBA = require("nba");
 
 export default class ProfileScreen extends React.Component {
   constructor() {
@@ -24,8 +31,11 @@ export default class ProfileScreen extends React.Component {
     this.state = {
       favTeam: "",
       image: "",
-      favPlayer: ""
+      favPlayer: "",
+      text: ""
     };
+    this.findPlayer = this.findPlayer.bind(this);
+    // this.handleChange = this.handleChange.bind(this);
   }
 
   static navigationOptions = {
@@ -35,11 +45,14 @@ export default class ProfileScreen extends React.Component {
     this.ActionSheet.show();
   };
 
-  componentDidMount() {
-    const NBA = require("nba");
-    const curry = NBA.findPlayer("Stephen Curry");
-    console.log(curry);
+  findPlayer() {
+    const player = NBA.findPlayer(`${this.state.text}`);
+    console.log(player);
+    this.setState({
+      favPlayer: player.fullName
+    });
   }
+
   render() {
     return (
       <View style={styles.container}>
@@ -146,6 +159,35 @@ export default class ProfileScreen extends React.Component {
               </View>
             )}
           </Card>
+
+          <Card>
+            <View>
+              <Text h6> Favorite Player: {this.state.favPlayer} </Text>
+              <TextInput
+                style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+                onChangeText={text => {
+                  this.setState({ text: text });
+                }}
+                placeholder="Use official names. Ex. Stephen Curry"
+                value={this.state.text}
+              />
+            </View>
+          </Card>
+          <View
+            style={[
+              {
+                width: "90%",
+                paddingLeft: 10,
+                margin: 10
+              }
+            ]}
+          >
+            <Button
+              onPress={() => this.findPlayer(this.state.text)}
+              title="Set Player"
+              color="#90A4AE"
+            />
+          </View>
         </ScrollView>
       </View>
     );
