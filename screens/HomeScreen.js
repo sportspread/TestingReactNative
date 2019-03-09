@@ -9,6 +9,7 @@ import OtherGames from '../components/OtherGames'
 import TopMatch from '../components/TopMatch.js'
 import { NBATeams, NBALogos } from '../teamsAlphabetical'
 import ActionSheet from 'react-native-actionsheet'
+import FadeInView from './FadeInView'
 
 export default class HomeScreen extends React.Component {
   constructor() {

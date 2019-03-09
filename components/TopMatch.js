@@ -5,6 +5,7 @@ import { Text, Card, Image } from 'react-native-elements'
 import { MonoText } from '../components/StyledText'
 import data from '../constants/dopestatz'
 import { NBATeams, NBALogos } from '../teamsAlphabetical.js'
+import FadeInViewSlow from '../screens/FadeInViewSlow'
 
 export const TopMatch = props => {
   let home
