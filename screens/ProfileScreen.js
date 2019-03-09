@@ -23,7 +23,8 @@ export default class ProfileScreen extends React.Component {
     super();
     this.state = {
       favTeam: "",
-      image: ""
+      image: "",
+      favPlayer: ""
     };
   }
 
@@ -33,6 +34,12 @@ export default class ProfileScreen extends React.Component {
   showActionSheet = () => {
     this.ActionSheet.show();
   };
+
+  componentDidMount() {
+    const NBA = require("nba");
+    const curry = NBA.findPlayer("Stephen Curry");
+    console.log(curry);
+  }
   render() {
     return (
       <View style={styles.container}>
