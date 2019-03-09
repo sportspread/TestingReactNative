@@ -18,7 +18,7 @@ export const OtherGames = props => {
   const awayImage = NBALogos[NBATeams.indexOf(away.name)];
 
   return (
-    <Card style={{ backgroundColor: "#4286f4" }}>
+    <Card>
       {props.bestGame !== undefined && props.bestGame.teams.length !== 0 ? (
         <FadeInView
           style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}

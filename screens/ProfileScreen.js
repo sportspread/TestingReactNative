@@ -29,9 +29,9 @@ export default class ProfileScreen extends React.Component {
   constructor() {
     super();
     this.state = {
-      favTeam: "",
+      favTeam: "Tap Me!",
       image: "",
-      favPlayer: "",
+      favPlayer: "Search Players Below",
       text: ""
     };
     this.findPlayer = this.findPlayer.bind(this);
@@ -113,7 +113,10 @@ export default class ProfileScreen extends React.Component {
               </View>
             ) : (
               <View>
-                <Text h6> Favorite Team: {this.state.favTeam} </Text>
+                <Text h6 style={{ alignContent: "center" }}>
+                  {" "}
+                  Favorite Team: {this.state.favTeam}{" "}
+                </Text>
 
                 <Text onPress={this.showActionSheet} />
                 <ActionSheet
@@ -168,14 +171,6 @@ export default class ProfileScreen extends React.Component {
           <Card>
             <View>
               <Text h6> Favorite Player: {this.state.favPlayer} </Text>
-              <TextInput
-                style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-                onChangeText={text => {
-                  this.setState({ text: text });
-                }}
-                placeholder="Use official names. Ex. Stephen Curry"
-                value={this.state.text}
-              />
             </View>
           </Card>
           <View
@@ -187,6 +182,18 @@ export default class ProfileScreen extends React.Component {
               }
             ]}
           >
+            <TextInput
+              style={{
+                height: 40,
+                borderColor: "gray",
+                borderWidth: 1
+              }}
+              onChangeText={text => {
+                this.setState({ text: text });
+              }}
+              placeholder="Use official names. Ex. Stephen Curry"
+              value={this.state.text}
+            />
             <Button
               onPress={this.findPlayer}
               title="Set Player"
