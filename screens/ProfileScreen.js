@@ -9,6 +9,8 @@ import {
   Avatar,
   SocialIcon
 } from "react-native-elements";
+import ActionSheet from "react-native-actionsheet";
+
 import data from "../constants/dopestatz";
 import { WebBrowser } from "expo";
 import { MonoText } from "../components/StyledText";
@@ -26,6 +28,9 @@ export default class ProfileScreen extends React.Component {
 
   static navigationOptions = {
     header: null
+  };
+  showActionSheet = () => {
+    this.ActionSheet.show();
   };
   render() {
     return (
@@ -60,7 +65,7 @@ export default class ProfileScreen extends React.Component {
           </Card>
           <Card>
             <Text h6> Favorite Team:</Text>
-            <Picker
+            {/* <Picker
               selectedValue={this.state.favTeam}
               onValueChange={teamName => {
                 this.setState({ favTeam: teamName });
@@ -77,7 +82,54 @@ export default class ProfileScreen extends React.Component {
                   />
                 );
               })}
-            </Picker>
+            </Picker> */}
+            <View>
+              <Text onPress={this.showActionSheet}>{this.state.favTeam}</Text>
+              <ActionSheet
+                ref={o => (this.ActionSheet = o)}
+                title={"Select Team"}
+                options={[
+                  "Atlanta Hawks",
+                  "Boston Celtics",
+                  "Brooklyn Nets",
+                  "Charlotte Hornets",
+                  "Chicago Bulls",
+                  "Cleveland Cavaliers",
+                  "Dallas Mavericks",
+                  "Denver Nuggets",
+                  "Detroit Pistons",
+                  "Golden State Warriors",
+                  "Houston Rockets",
+                  "Indiana Pacers",
+                  "Los Angeles Clippers",
+                  "Los Angeles Lakers",
+                  "Memphis Grizzlies",
+                  "Miami Heat",
+                  "Milwaukee Bucks",
+                  "Minnesota Timberwolves",
+                  "New Orleans Pelicans",
+                  "New York Knicks",
+                  "Oklahoma City Thunder",
+                  "Orlando Magic",
+                  "Philadelphia 76ers",
+                  "Phoenix Suns",
+                  "Portland Trail Blazers",
+                  "Sacramento Kings",
+                  "San Antonio Spurs",
+                  "Toronto Raptors",
+                  "Utah Jazz",
+                  "Washington Wizards",
+                  "Cancel"
+                ]}
+                cancelButtonIndex={37}
+                destructiveButtonIndex={37}
+                onPress={index => {
+                  this.setState({
+                    favTeam: NBATeams[index]
+                  });
+                }}
+              />
+            </View>
           </Card>
         </ScrollView>
       </View>
