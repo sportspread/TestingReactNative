@@ -21,7 +21,7 @@ export const TopMatch = props => {
   const awayImage = NBALogos[NBATeams.indexOf(away.name)];
   return (
     <View>
-      <Text h3 style={{ fontWeight: "bold" }}>
+      <Text h3 style={{ fontWeight: "bold", paddingLeft: 10 }}>
         {" "}
         Tonight's Top Game:
       </Text>
@@ -31,7 +31,6 @@ export const TopMatch = props => {
             style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}
           >
             <View>
-              {/* <Text>{away.name} </Text> */}
               <Image
                 style={{
                   width: 100,
@@ -47,7 +46,6 @@ export const TopMatch = props => {
               <Text h1> @ </Text>
             </View>
             <View>
-              {/* <Text>{home.name}</Text> */}
               <Image
                 style={{
                   width: 100,
