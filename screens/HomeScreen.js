@@ -168,6 +168,7 @@ export default class HomeScreen extends React.Component {
           <Picker
             selectedValue={this.state.favTeam}
             onValueChange={teamName => {
+              this.getGames()
               this.setState({ favTeam: teamName })
             }}
             promt="Select Favorite Team"
