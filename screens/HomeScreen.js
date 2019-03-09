@@ -8,6 +8,7 @@ import { KylesKey, SamsKey } from '../secrets.js'
 import OtherGames from '../components/OtherGames'
 import TopMatch from '../components/TopMatch.js'
 import { NBATeams, NBALogos } from '../teamsAlphabetical'
+import FadeInView from './FadeInView'
 
 export default class HomeScreen extends React.Component {
   constructor() {
@@ -18,7 +19,6 @@ export default class HomeScreen extends React.Component {
       otherGames: [],
       favTeam: '',
     }
-    // this.loadGames = this.loadGames.bind(this)
     this.getGames = this.getGames.bind(this)
   }
   static navigationOptions = {
@@ -31,38 +31,34 @@ export default class HomeScreen extends React.Component {
 
   DO NOT DELETE
   */
-
-    fetch(
-      'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
-      {
-        method: 'GET',
-        headers: {
-          'X-RapidAPI-Key': SamsKey,
-        },
-      }
-    )
-      .then(res => {
-        return res.json()
-      })
-      .then(resJSON => {
-        let today = new Date()
-        let tomorrow = new Date()
-        tomorrow.setDate(today.getDate() + 1)
-
-        let filtered = resJSON.events.filter(event => {
-          console.log()
-
-          return (
-            Date.parse(event.event_date.slice(0, 10)) < Date.parse(tomorrow)
-          )
-        })
-        //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
-        return filtered
-      })
-      .then(filtered => {
-        this.setState({ allGamesData: filtered })
-      })
-
+    // fetch(
+    //   'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
+    //   {
+    //     method: 'GET',
+    //     headers: {
+    //       'X-RapidAPI-Key': SamsKey,
+    //     },
+    //   }
+    // )
+    //   .then(res => {
+    //     return res.json()
+    //   })
+    //   .then(resJSON => {
+    //     let today = new Date()
+    //     let tomorrow = new Date()
+    //     tomorrow.setDate(today.getDate() + 1)
+    //     let filtered = resJSON.events.filter(event => {
+    //       console.log()
+    //       return (
+    //         Date.parse(event.event_date.slice(0, 10)) < Date.parse(tomorrow)
+    //       )
+    //     })
+    //     //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
+    //     return filtered
+    //   })
+    //   .then(filtered => {
+    //     this.setState({ allGamesData: filtered })
+    //   })
     /* 
   Below here is for testing using dummy data
 
@@ -70,8 +66,7 @@ export default class HomeScreen extends React.Component {
 
   dOnT TeLl Me WhAt To Do
   */
-
-    // this.setState({ allGamesData: data.events })
+    this.setState({ allGamesData: data.events })
   }
 
   bubbleSort(arr) {
@@ -137,7 +132,7 @@ export default class HomeScreen extends React.Component {
           {this.state.bestGame === {} ? (
             ''
           ) : (
-            <View>
+            <FadeInView>
               {this.state.bestGame.teams !== undefined &&
               this.state.bestGame.teams.length !== 0 ? (
                 <TopMatch bestGame={this.state.bestGame} />
@@ -157,11 +152,19 @@ export default class HomeScreen extends React.Component {
               {this.state.bestGame.teams === undefined ? (
                 <Text />
               ) : (
-                <View style={{ paddingLeft: 75 }}>
+                <FadeInView
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    paddingTop: 20,
+                    paddingBottom: 15,
+                  }}
+                >
                   <Text h3 style={{ fontWeight: 'bold' }}>
-                    Other Games :
+                    Other Games
                   </Text>
-                </View>
+                </FadeInView>
               )}
               <View>
                 {this.state.otherGames !== undefined &&
@@ -179,7 +182,7 @@ export default class HomeScreen extends React.Component {
                   <Text />
                 )}
               </View>
-            </View>
+            </FadeInView>
           )}
           <View style={styles.getStartedContainer}>
             <Button title="Load Games" onPress={this.getGames} />
