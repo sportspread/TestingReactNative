@@ -8,7 +8,7 @@ import { KylesKey, SamsKey } from '../secrets.js'
 import OtherGames from '../components/OtherGames'
 import TopMatch from '../components/TopMatch.js'
 import { NBATeams, NBALogos } from '../teamsAlphabetical'
-import FadeInView from './FadeInView'
+import ActionSheet from 'react-native-actionsheet'
 
 export default class HomeScreen extends React.Component {
   constructor() {
@@ -121,6 +121,9 @@ export default class HomeScreen extends React.Component {
       otherGames: [...sorted],
     })
   }
+  showActionSheet = () => {
+    this.ActionSheet.show()
+  }
 
   render() {
     return (
@@ -194,25 +197,79 @@ export default class HomeScreen extends React.Component {
               favorite team more heavily in the results.
             </Text>
           </View>
-
-          <Picker
-            selectedValue={this.state.favTeam}
-            onValueChange={teamName => {
-              this.setState({ favTeam: teamName })
-            }}
-            promt="Select Favorite Team"
-          >
-            <Picker.Item label="Select a Team" value="" />
-            {NBATeams.map(team => {
-              return (
-                <Picker.Item
-                  label={team}
-                  value={team}
-                  key={NBATeams.indexOf(team)}
+          {Platform.OS === 'android' ? (
+            <Picker
+              selectedValue={this.state.favTeam}
+              onValueChange={teamName => {
+                this.setState({ favTeam: teamName })
+              }}
+              promt="Select Favorite Team"
+            >
+              <Picker.Item label="Select a Team" value="" />
+              {NBATeams.map(team => {
+                return (
+                  <Picker.Item
+                    label={team}
+                    value={team}
+                    key={NBATeams.indexOf(team)}
+                  />
+                )
+              })}
+            </Picker>
+          ) : (
+            <View>
+              <Card>
+                <Text onPress={this.showActionSheet}>
+                  {' '}
+                  Pick Favorite Team: {this.state.favTeam}
+                </Text>
+                <ActionSheet
+                  ref={o => (this.ActionSheet = o)}
+                  title={'Select Team'}
+                  options={[
+                    'Atlanta Hawks',
+                    'Boston Celtics',
+                    'Brooklyn Nets',
+                    'Charlotte Hornets',
+                    'Chicago Bulls',
+                    'Cleveland Cavaliers',
+                    'Dallas Mavericks',
+                    'Denver Nuggets',
+                    'Detroit Pistons',
+                    'Golden State Warriors',
+                    'Houston Rockets',
+                    'Indiana Pacers',
+                    'Los Angeles Clippers',
+                    'Los Angeles Lakers',
+                    'Memphis Grizzlies',
+                    'Miami Heat',
+                    'Milwaukee Bucks',
+                    'Minnesota Timberwolves',
+                    'New Orleans Pelicans',
+                    'New York Knicks',
+                    'Oklahoma City Thunder',
+                    'Orlando Magic',
+                    'Philadelphia 76ers',
+                    'Phoenix Suns',
+                    'Portland Trail Blazers',
+                    'Sacramento Kings',
+                    'San Antonio Spurs',
+                    'Toronto Raptors',
+                    'Utah Jazz',
+                    'Washington Wizards',
+                    'Cancel',
+                  ]}
+                  cancelButtonIndex={37}
+                  destructiveButtonIndex={37}
+                  onPress={index => {
+                    this.setState({
+                      favTeam: NBATeams[index],
+                    })
+                  }}
                 />
-              )
-            })}
-          </Picker>
+              </Card>
+            </View>
+          )}
         </ScrollView>
       </View>
     )

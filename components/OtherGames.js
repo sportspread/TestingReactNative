@@ -5,16 +5,6 @@ import { Card, Text, Image } from 'react-native-elements'
 import { NBATeams, NBALogos } from '../teamsAlphabetical.js'
 import FadeInView from '../screens/FadeInView'
 export const OtherGames = props => {
-  // console.log("OTHER GAME SPREAD OTHER GAMES", props.otherGame.spread);
-  // let style;
-  // if (Number(props.bestGame.spread) < Number(props.otherGame.spread) <= 4) {
-  //   style = "#e8eaed";
-  // } else if (4.5 < Number(props.otherGame.spread) < 8.5) {
-  //   style = "#a6a8ad";
-  // } else if (Number(props.otherGame.spread) > 8.5) {
-  //   style = "#88898c";
-  // }
-
   let home
   let away
   if (props.bestGame.teams[0].isAway === true) {
