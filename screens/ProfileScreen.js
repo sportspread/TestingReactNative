@@ -1,6 +1,12 @@
 import React from 'react'
-import { ThemeProvider } from 'react-native-elements'
-import { Platform, ScrollView, StyleSheet, View, Picker } from 'react-native'
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+  Picker,
+  TextInput,
+} from 'react-native'
 import {
   Image,
   Text,
@@ -10,21 +16,19 @@ import {
   SocialIcon,
 } from 'react-native-elements'
 import ActionSheet from 'react-native-actionsheet'
-
-import data from '../constants/dopestatz'
-import { WebBrowser } from 'expo'
-import { MonoText } from '../components/StyledText'
-import { TopMatch } from '../components/TopMatch.js'
-import { OtherGames } from '../components/OtherGames.js'
 import { NBATeams, NBALogos } from '../teamsAlphabetical'
+const NBA = require('nba')
 
 export default class ProfileScreen extends React.Component {
   constructor() {
     super()
     this.state = {
-      favTeam: '',
+      favTeam: 'Tap Me!',
       image: '',
+      favPlayer: 'Search Players Below',
+      text: '',
     }
+    this.findPlayer = this.findPlayer.bind(this)
   }
 
   static navigationOptions = {
@@ -33,6 +37,21 @@ export default class ProfileScreen extends React.Component {
   showActionSheet = () => {
     this.ActionSheet.show()
   }
+
+  findPlayer() {
+    let sanitizedPlayer = this.state.text.toLowerCase().trim()
+    const player = NBA.findPlayer(sanitizedPlayer)
+    if (player !== undefined) {
+      this.setState({
+        favPlayer: player.fullName,
+      })
+    } else {
+      this.setState({
+        text: 'Please Enter a Valid Player Name',
+      })
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -88,7 +107,10 @@ export default class ProfileScreen extends React.Component {
               </View>
             ) : (
               <View>
-                <Text h6> Favorite Team: {this.state.favTeam} </Text>
+                <Text h6 style={{ alignContent: 'center' }}>
+                  {' '}
+                  Favorite Team: {this.state.favTeam}{' '}
+                </Text>
 
                 <Text onPress={this.showActionSheet} />
                 <ActionSheet
@@ -139,6 +161,39 @@ export default class ProfileScreen extends React.Component {
               </View>
             )}
           </Card>
+
+          <Card>
+            <View>
+              <Text h6> Favorite Player: {this.state.favPlayer} </Text>
+            </View>
+          </Card>
+          <View
+            style={[
+              {
+                width: '90%',
+                paddingLeft: 10,
+                margin: 10,
+              },
+            ]}
+          >
+            <TextInput
+              style={{
+                height: 40,
+                borderColor: 'gray',
+                borderWidth: 1,
+              }}
+              onChangeText={text => {
+                this.setState({ text: text })
+              }}
+              placeholder="Use official names. Ex. Stephen Curry"
+              value={this.state.text}
+            />
+            <Button
+              onPress={this.findPlayer}
+              title="Set Player"
+              color="#90A4AE"
+            />
+          </View>
         </ScrollView>
       </View>
     )
