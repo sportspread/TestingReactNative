@@ -1,44 +1,44 @@
-/* eslint-disable complexity */
-import React from 'react'
+/* eslint-disable  */
+import React from "react";
 import {
   Platform,
   ScrollView,
   StyleSheet,
   View,
   Picker,
-  TextInput,
-} from 'react-native'
-import { Text, Card, Button } from 'react-native-elements'
-import data from '../constants/dopestatz'
-import { KylesKey, SamsKey } from '../secrets.js'
-import OtherGames from '../components/OtherGames'
-import TopMatch from '../components/TopMatch.js'
-import { NBATeams } from '../teamsAlphabetical'
-import ActionSheet from 'react-native-actionsheet'
-import FadeInView from './FadeInView'
-import { allTeams } from '../constants/teams'
-const NBA = require('nba')
+  TextInput
+} from "react-native";
+import { Text, Card, Button } from "react-native-elements";
+import data from "../constants/dopestatz";
+import { KylesKey, SamsKey } from "../secrets.js";
+import OtherGames from "../components/OtherGames";
+import TopMatch from "../components/TopMatch.js";
+import { NBATeams } from "../teamsAlphabetical";
+import ActionSheet from "react-native-actionsheet";
+import FadeInView from "./FadeInView";
+import { allTeams } from "../constants/teams";
+const NBA = require("nba");
 
 export default class HomeScreen extends React.Component {
   constructor() {
-    super()
+    super();
     this.state = {
       allGamesData: [],
       bestGame: [],
       otherGames: [],
-      favTeam: '',
-      playerTeam: '',
-      favPlayer: 'Search Players Below',
-      text: '',
-    }
-    this.findPlayer = this.findPlayer.bind(this)
-    this.getGames = this.getGames.bind(this)
-    this.scrollToTop = this.scrollToTop.bind(this)
-    this.getSpread = this.getSpread.bind(this)
+      favTeam: "",
+      playerTeam: "",
+      favPlayer: "Search Players Below",
+      text: ""
+    };
+    this.findPlayer = this.findPlayer.bind(this);
+    this.getGames = this.getGames.bind(this);
+    this.scrollToTop = this.scrollToTop.bind(this);
+    this.getSpread = this.getSpread.bind(this);
   }
   static navigationOptions = {
-    header: null,
-  }
+    header: null
+  };
 
   async componentDidMount() {
     /* 
@@ -48,31 +48,29 @@ export default class HomeScreen extends React.Component {
   */
 
     fetch(
-      'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
+      "https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods",
       {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'X-RapidAPI-Key': SamsKey,
-        },
+          "X-RapidAPI-Key": KylesKey
+        }
       }
     )
       .then(res => {
-        return res.json()
+        return res.json();
       })
       .then(resJSON => {
-        let today = new Date()
-        let tomorrow = new Date()
-        tomorrow.setDate(today.getDate() + 1)
+        let today = new Date();
+        let tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
         let filtered = resJSON.events.filter(event => {
-          return (
-            Date.parse(event.event_date.slice(0, 10)) < Date.parse(tomorrow)
-          )
-        })
-        return filtered
+          return Date.parse(event.event_date) < Date.parse(tomorrow);
+        });
+        return filtered;
       })
       .then(filtered => {
-        this.setState({ allGamesData: filtered })
-      })
+        this.setState({ allGamesData: filtered });
+      });
 
     /* 
   Below here is for testing using dummy data
@@ -85,107 +83,107 @@ export default class HomeScreen extends React.Component {
     // this.setState({ allGamesData: data.events })
   }
   scrollToTop() {
-    this.scroller.scrollTo({ x: 0, y: 0 })
+    this.scroller.scrollTo({ x: 0, y: 0 });
   }
 
   bubbleSort(arr) {
-    let length = arr.length
-    let swapped
+    let length = arr.length;
+    let swapped;
     do {
-      swapped = false
+      swapped = false;
       for (let i = 0; i < length; i++) {
-        if (arr[i + 1] === undefined) break
+        if (arr[i + 1] === undefined) break;
         if (arr[i].spread > arr[i + 1].spread) {
-          let temp = arr[i]
-          arr[i] = arr[i + 1]
-          arr[i + 1] = temp
-          swapped = true
+          let temp = arr[i];
+          arr[i] = arr[i + 1];
+          arr[i + 1] = temp;
+          swapped = true;
         }
       }
-    } while (swapped)
-    return arr
+    } while (swapped);
+    return arr;
   }
 
   findPlayer() {
-    let sanitizedPlayer = this.state.text.toLowerCase().trim()
-    const player = NBA.findPlayer(sanitizedPlayer)
+    let sanitizedPlayer = this.state.text.toLowerCase().trim();
+    const player = NBA.findPlayer(sanitizedPlayer);
     if (player !== undefined) {
       const team = allTeams.filter(curTeam => {
-        return curTeam.teamId === player.teamId
-      })
+        return curTeam.teamId === player.teamId;
+      });
       this.setState({
         favPlayer: player.fullName,
-        playerTeam: team[0].teamName,
-      })
+        playerTeam: team[0].teamName
+      });
     } else {
       this.setState({
-        text: '',
-      })
-      alert('Please Enter a Valid Player Name')
+        text: ""
+      });
+      alert("Please Enter a Valid Player Name");
     }
   }
 
   getSpread(event) {
-    let counter = 0
-    let total = 0
+    let counter = 0;
+    let total = 0;
     for (key in event.lines) {
       if (event.lines.hasOwnProperty([key])) {
         let curSpread =
           event.lines[key].spread.point_spread_home > 0
             ? event.lines[key].spread.point_spread_home
-            : event.lines[key].spread.point_spread_home * -1
-        total += curSpread
-        counter++
+            : event.lines[key].spread.point_spread_home * -1;
+        total += curSpread;
+        counter++;
       }
     }
-    return total / counter
+    return total / counter;
   }
 
   getGames() {
-    const { allGamesData, favTeam, playerTeam } = this.state
+    const { allGamesData, favTeam, playerTeam } = this.state;
     let teamsAndSpreads = allGamesData.map(event => {
       return {
         teams: event.teams.map(team => {
           return {
             name: team.name,
             isAway: team.is_away,
-            isHome: team.is_home,
-          }
+            isHome: team.is_home
+          };
         }),
-        spread: this.getSpread(event),
-      }
-    })
+        spread: this.getSpread(event)
+      };
+    });
 
     if (favTeam) {
       teamsAndSpreads.forEach(game => {
         game.teams.forEach(team => {
           if (team.name === favTeam) {
-            game.spread = game.spread - game.spread * 0.33
+            game.spread = game.spread - game.spread * 0.33;
           }
-        })
-      })
+        });
+      });
     }
 
     if (playerTeam) {
       teamsAndSpreads.forEach(game => {
         game.teams.forEach(team => {
           if (team.name === playerTeam) {
-            game.spread = game.spread - game.spread * 0.33
+            game.spread = game.spread - game.spread * 0.33;
           }
-        })
-      })
+        });
+      });
     }
 
-    let sorted = this.bubbleSort(teamsAndSpreads)
-    this.scrollToTop()
+    let sorted = this.bubbleSort(teamsAndSpreads);
+    this.scrollToTop();
     this.setState({
       bestGame: sorted.shift(),
-      otherGames: [...sorted],
-    })
+      otherGames: [...sorted]
+    });
   }
   showActionSheet = () => {
-    this.ActionSheet.show()
-  }
+    this.ActionSheet.show();
+  };
 
   render() {
     return (
@@ -194,13 +192,13 @@ export default class HomeScreen extends React.Component {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
           ref={scroller => {
-            this.scroller = scroller
+            this.scroller = scroller;
           }}
         >
           {this.state.bestGame === {} ? (
-            ''
+            ""
           ) : (
-            <FadeInView>
+            <FadeInView alignContent="center">
               {this.state.bestGame.teams !== undefined &&
               this.state.bestGame.teams.length !== 0 ? (
                 <TopMatch bestGame={this.state.bestGame} />
@@ -208,19 +206,22 @@ export default class HomeScreen extends React.Component {
                 <Text />
               )}
               {this.state.bestGame.teams === undefined ? (
-                <Text />
+                <Text h3 style={{ paddingLeft: 10 }}>
+                  {" "}
+                  Welcome To [...sports]
+                </Text>
               ) : (
                 <FadeInView
                   style={{
                     flex: 1,
-                    flexDirection: 'row',
-                    justifyContent: 'center',
+                    flexDirection: "row",
+                    justifyContent: "center",
                     paddingTop: 20,
-                    paddingBottom: 15,
+                    paddingBottom: 15
                   }}
                 >
                   <View alignItems="center">
-                    <Text h4 style={{ fontWeight: 'bold' }}>
+                    <Text h4 style={{ fontWeight: "bold" }}>
                       Other Games
                     </Text>
                     <Text h5 alignText="center">
@@ -239,7 +240,7 @@ export default class HomeScreen extends React.Component {
                         bestGame={this.state.bestGame}
                         otherGame={game}
                       />
-                    )
+                    );
                   })
                 ) : (
                   <Text />
@@ -254,7 +255,7 @@ export default class HomeScreen extends React.Component {
               style={{
                 paddingTop: 20,
                 paddingBottom: 15,
-                alignItems: 'center',
+                alignItems: "center"
               }}
             >
               <Button title="Load Games" onPress={this.getGames} />
@@ -264,19 +265,19 @@ export default class HomeScreen extends React.Component {
               style={{
                 paddingTop: 20,
                 paddingBottom: 15,
-                alignItems: 'center',
-                marginHorizontal: 50,
+                alignItems: "center",
+                marginHorizontal: 50
               }}
             >
               <Button title="Refresh Games" onPress={this.getGames} />
             </View>
           )}
 
-          {Platform.OS === 'android' ? (
+          {Platform.OS === "android" ? (
             <Picker
               selectedValue={this.state.favTeam}
               onValueChange={teamName => {
-                this.setState({ favTeam: teamName })
+                this.setState({ favTeam: teamName });
               }}
               promt="Select Favorite Team"
             >
@@ -288,58 +289,58 @@ export default class HomeScreen extends React.Component {
                     value={team}
                     key={NBATeams.indexOf(team)}
                   />
-                )
+                );
               })}
             </Picker>
           ) : (
             <View>
               <Card>
                 <Text onPress={this.showActionSheet}>
-                  {' '}
+                  {" "}
                   Pick Favorite Team: {this.state.favTeam}
                 </Text>
                 <ActionSheet
                   ref={o => (this.ActionSheet = o)}
-                  title={'Select Team'}
+                  title={"Select Team"}
                   options={[
-                    'Atlanta Hawks',
-                    'Boston Celtics',
-                    'Brooklyn Nets',
-                    'Charlotte Hornets',
-                    'Chicago Bulls',
-                    'Cleveland Cavaliers',
-                    'Dallas Mavericks',
-                    'Denver Nuggets',
-                    'Detroit Pistons',
-                    'Golden State Warriors',
-                    'Houston Rockets',
-                    'Indiana Pacers',
-                    'Los Angeles Clippers',
-                    'Los Angeles Lakers',
-                    'Memphis Grizzlies',
-                    'Miami Heat',
-                    'Milwaukee Bucks',
-                    'Minnesota Timberwolves',
-                    'New Orleans Pelicans',
-                    'New York Knicks',
-                    'Oklahoma City Thunder',
-                    'Orlando Magic',
-                    'Philadelphia 76ers',
-                    'Phoenix Suns',
-                    'Portland Trail Blazers',
-                    'Sacramento Kings',
-                    'San Antonio Spurs',
-                    'Toronto Raptors',
-                    'Utah Jazz',
-                    'Washington Wizards',
-                    'Cancel',
+                    "Atlanta Hawks",
+                    "Boston Celtics",
+                    "Brooklyn Nets",
+                    "Charlotte Hornets",
+                    "Chicago Bulls",
+                    "Cleveland Cavaliers",
+                    "Dallas Mavericks",
+                    "Denver Nuggets",
+                    "Detroit Pistons",
+                    "Golden State Warriors",
+                    "Houston Rockets",
+                    "Indiana Pacers",
+                    "Los Angeles Clippers",
+                    "Los Angeles Lakers",
+                    "Memphis Grizzlies",
+                    "Miami Heat",
+                    "Milwaukee Bucks",
+                    "Minnesota Timberwolves",
+                    "New Orleans Pelicans",
+                    "New York Knicks",
+                    "Oklahoma City Thunder",
+                    "Orlando Magic",
+                    "Philadelphia 76ers",
+                    "Phoenix Suns",
+                    "Portland Trail Blazers",
+                    "Sacramento Kings",
+                    "San Antonio Spurs",
+                    "Toronto Raptors",
+                    "Utah Jazz",
+                    "Washington Wizards",
+                    "Cancel"
                   ]}
                   cancelButtonIndex={37}
                   destructiveButtonIndex={37}
                   onPress={index => {
                     this.setState({
-                      favTeam: NBATeams[index],
-                    })
+                      favTeam: NBATeams[index]
+                    });
                   }}
                 />
               </Card>
@@ -354,27 +355,26 @@ export default class HomeScreen extends React.Component {
             style={{
               paddingTop: 20,
               paddingBottom: 15,
-              alignItems: 'center',
-              marginHorizontal: 50,
+              alignItems: "center",
+              marginHorizontal: 50
             }}
           >
             <TextInput
               style={{
                 height: 40,
                 width: 300,
-                borderColor: 'gray',
+                borderColor: "gray",
                 borderWidth: 1,
-
-                textAlign: 'center',
+                textAlign: "center"
               }}
               onChangeText={text => {
-                if (text === '') {
+                if (text === "") {
                   this.setState({
-                    favPlayer: 'Search Players Below',
-                    playerTeam: '',
-                  })
+                    favPlayer: "Search Players Below",
+                    playerTeam: ""
+                  });
                 }
-                this.setState({ text: text })
+                this.setState({ text: text });
               }}
               placeholder="Use official names. Ex. Stephen Curry"
               value={this.state.text}
@@ -383,8 +383,8 @@ export default class HomeScreen extends React.Component {
               style={{
                 paddingTop: 20,
                 paddingBottom: 15,
-                alignItems: 'center',
-                marginHorizontal: 50,
+                alignItems: "center",
+                marginHorizontal: 50
               }}
             >
               <Button
@@ -396,99 +396,99 @@ export default class HomeScreen extends React.Component {
           </View>
         </ScrollView>
       </View>
-    )
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff"
   },
   developmentModeText: {
     marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
+    color: "rgba(0,0,0,0.4)",
     fontSize: 14,
     lineHeight: 19,
-    textAlign: 'center',
+    textAlign: "center"
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 30
   },
   welcomeContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 20
   },
   welcomeImage: {
     width: 100,
     height: 80,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     marginTop: 3,
-    marginLeft: -10,
+    marginLeft: -10
   },
   getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
+    alignItems: "center",
+    marginHorizontal: 50
   },
   homeScreenFilename: {
-    marginVertical: 7,
+    marginVertical: 7
   },
   codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
+    color: "rgba(96,100,109, 0.8)"
   },
   codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
+    backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 3,
-    paddingHorizontal: 4,
+    paddingHorizontal: 4
   },
   getStartedText: {
     fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
+    color: "rgba(96,100,109, 1)",
     lineHeight: 24,
-    textAlign: 'center',
+    textAlign: "center"
   },
   tabBarInfoContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     ...Platform.select({
       ios: {
-        shadowColor: 'black',
+        shadowColor: "black",
         shadowOffset: { height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowRadius: 3
       },
       android: {
-        elevation: 20,
-      },
+        elevation: 20
+      }
     }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
+    alignItems: "center",
+    backgroundColor: "#fbfbfb",
+    paddingVertical: 20
   },
   tabBarInfoText: {
     fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
+    color: "rgba(96,100,109, 1)",
+    textAlign: "center"
   },
   navigationFilename: {
-    marginTop: 5,
+    marginTop: 5
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: 'center',
+    alignItems: "center"
   },
   helpLink: {
-    paddingVertical: 15,
+    paddingVertical: 15
   },
   helpLinkText: {
     fontSize: 14,
-    color: '#2e78b7',
+    color: "#2e78b7"
   },
   teams: {
     fontSize: 25,
-    fontWeight: 'bold',
-  },
-})
+    fontWeight: "bold"
+  }
+});
