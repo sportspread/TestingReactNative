@@ -6,6 +6,7 @@ import {
   View,
   Picker,
   TextInput,
+  Linking,
 } from 'react-native'
 import {
   Image,
@@ -47,9 +48,28 @@ export default class ProfileScreen extends React.Component {
       })
     } else {
       this.setState({
-        text: 'Please Enter a Valid Player Name',
+        text: '',
       })
+      alert('Please Enter a Valid Player Name')
     }
+  }
+
+  openTwitter() {
+    Linking.openURL(`https://twitter.com/`).catch(err =>
+      console.error('An error occurred', err)
+    )
+  }
+
+  openFacebook() {
+    Linking.openURL(`https://www.facebook.com/`).catch(err =>
+      console.error('An error occurred', err)
+    )
+  }
+
+  openInstagram() {
+    Linking.openURL(`https://www.instagram.com/`).catch(err =>
+      console.error('An error occurred', err)
+    )
   }
 
   render() {
@@ -78,9 +98,9 @@ export default class ProfileScreen extends React.Component {
           <Card>
             <Text h6> Share To:</Text>
             <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-              <SocialIcon type="twitter" />
-              <SocialIcon type="facebook" />
-              <SocialIcon type="instagram" />
+              <SocialIcon type="twitter" onPress={this.openTwitter} />
+              <SocialIcon type="facebook" onPress={this.openFacebook} />
+              <SocialIcon type="instagram" onPress={this.openInstagram} />
             </View>
           </Card>
           <Card>

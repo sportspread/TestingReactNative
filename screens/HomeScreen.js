@@ -1,5 +1,14 @@
+/* eslint-disable complexity */
 import React from 'react'
-import { Platform, ScrollView, StyleSheet, View, Picker } from 'react-native'
+import {
+  Dimensions,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+  Picker,
+  TextInput,
+} from 'react-native'
 import { Image, Text, Card, Button } from 'react-native-elements'
 import { WebBrowser } from 'expo'
 import { MonoText } from '../components/StyledText'
@@ -10,6 +19,8 @@ import TopMatch from '../components/TopMatch.js'
 import { NBATeams, NBALogos } from '../teamsAlphabetical'
 import ActionSheet from 'react-native-actionsheet'
 import FadeInView from './FadeInView'
+import { allTeams } from '../constants/teams'
+const NBA = require('nba')
 
 export default class HomeScreen extends React.Component {
   constructor() {
@@ -19,47 +30,52 @@ export default class HomeScreen extends React.Component {
       bestGame: [],
       otherGames: [],
       favTeam: '',
+      playerTeam: '',
+      favPlayer: 'Search Players Below',
+      text: '',
     }
+    this.findPlayer = this.findPlayer.bind(this)
     this.getGames = this.getGames.bind(this)
+    this.scrollToTop = this.scrollToTop.bind(this)
   }
   static navigationOptions = {
     header: null,
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     /* 
   Below here is for using our API call
 
   DO NOT DELETE
   */
     // fetch(
-    //   "https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods",
+    //   'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
     //   {
-    //     method: "GET",
+    //     method: 'GET',
     //     headers: {
-    //       "X-RapidAPI-Key": SamsKey
-    //     }
+    //       'X-RapidAPI-Key': SamsKey,
+    //     },
     //   }
     // )
     //   .then(res => {
-    //     return res.json();
+    //     return res.json()
     //   })
     //   .then(resJSON => {
-    //     let today = new Date();
-    //     let tomorrow = new Date();
-    //     tomorrow.setDate(today.getDate() + 1);
+    //     let today = new Date()
+    //     let tomorrow = new Date()
+    //     tomorrow.setDate(today.getDate() + 1)
     //     let filtered = resJSON.events.filter(event => {
-    //       console.log();
+    //       console.log()
     //       return (
     //         Date.parse(event.event_date.slice(0, 10)) < Date.parse(tomorrow)
-    //       );
-    //     });
+    //       )
+    //     })
     //     //Won't allow you to setState on an unmounted component. Will need to store this data in a constant and then calll setState on componentDidMount
-    //     return filtered;
+    //     return filtered
     //   })
     //   .then(filtered => {
-    //     this.setState({ allGamesData: filtered });
-    //   });
+    //     this.setState({ allGamesData: filtered })
+    //   })
     /* 
   Below here is for testing using dummy data
 
@@ -67,7 +83,10 @@ export default class HomeScreen extends React.Component {
 
   dOnT TeLl Me WhAt To Do
   */
-    // this.setState({ allGamesData: data.events });
+    this.setState({ allGamesData: data.events })
+  }
+  scrollToTop() {
+    this.scroller.scrollTo({ x: 0, y: 0 })
   }
 
   bubbleSort(arr) {
@@ -88,8 +107,27 @@ export default class HomeScreen extends React.Component {
     return arr
   }
 
+  findPlayer() {
+    let sanitizedPlayer = this.state.text.toLowerCase().trim()
+    const player = NBA.findPlayer(sanitizedPlayer)
+    if (player !== undefined) {
+      const team = allTeams.filter(curTeam => {
+        return curTeam.teamId === player.teamId
+      })
+      this.setState({
+        favPlayer: player.fullName,
+        playerTeam: team[0].teamName,
+      })
+    } else {
+      this.setState({
+        text: '',
+      })
+      alert('Please Enter a Valid Player Name')
+    }
+  }
+
   getGames() {
-    const { allGamesData, favTeam } = this.state
+    const { allGamesData, favTeam, playerTeam } = this.state
     let teamsAndSpreads = allGamesData.map(event => {
       return {
         teams: event.teams.map(team => {
@@ -116,7 +154,18 @@ export default class HomeScreen extends React.Component {
       })
     }
 
+    if (playerTeam) {
+      teamsAndSpreads.forEach(game => {
+        game.teams.forEach(team => {
+          if (team.name === playerTeam) {
+            game.spread = game.spread - game.spread * 0.33
+          }
+        })
+      })
+    }
+
     let sorted = this.bubbleSort(teamsAndSpreads)
+    this.scrollToTop()
     this.setState({
       bestGame: sorted.shift(),
       otherGames: [...sorted],
@@ -132,6 +181,9 @@ export default class HomeScreen extends React.Component {
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
+          ref={scroller => {
+            this.scroller = scroller
+          }}
         >
           {this.state.bestGame === {} ? (
             ''
@@ -188,9 +240,31 @@ export default class HomeScreen extends React.Component {
               </View>
             </FadeInView>
           )}
-          <View style={styles.getStartedContainer}>
-            <Button title="Load Games" onPress={this.getGames} />
-          </View>
+
+          {this.state.bestGame === undefined ||
+          this.state.bestGame.length === 0 ? (
+            <View
+              style={{
+                paddingTop: 20,
+                paddingBottom: 15,
+                alignItems: 'center',
+                marginHorizontal: 50,
+              }}
+            >
+              <Button title="Load Games" onPress={this.getGames} />
+            </View>
+          ) : (
+            <View
+              style={{
+                paddingTop: 20,
+                paddingBottom: 15,
+                alignItems: 'center',
+                marginHorizontal: 50,
+              }}
+            >
+              <Button title="Refresh Games" onPress={this.getGames} />
+            </View>
+          )}
 
           {Platform.OS === 'android' ? (
             <Picker
@@ -265,6 +339,53 @@ export default class HomeScreen extends React.Component {
               </Card>
             </View>
           )}
+          <Card>
+            <View>
+              <Text h6> Favorite Player: {this.state.favPlayer} </Text>
+            </View>
+          </Card>
+          <View
+            style={{
+              paddingTop: 20,
+              paddingBottom: 15,
+              alignItems: 'center',
+              marginHorizontal: 50,
+            }}
+          >
+            <TextInput
+              style={{
+                height: 40,
+                borderColor: 'gray',
+                borderWidth: 1,
+              }}
+              onChangeText={text => {
+                if (text === '') {
+                  this.setState({
+                    favPlayer: 'Search Players Below',
+                    playerTeam: '',
+                  })
+                }
+                this.setState({ text: text })
+              }}
+              placeholder="Use official names. Ex. Stephen Curry"
+              value={this.state.text}
+            />
+            <View
+              style={{
+                paddingTop: 20,
+                paddingBottom: 15,
+                alignItems: 'center',
+                marginHorizontal: 50,
+              }}
+            >
+              <Button
+                style={{ paddingTop: 100, paddingBottom: 15 }}
+                onPress={this.findPlayer}
+                title="Set Player"
+                color="#90A4AE"
+              />
+            </View>
+          </View>
         </ScrollView>
       </View>
     )
