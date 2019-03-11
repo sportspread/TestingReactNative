@@ -192,12 +192,6 @@ export default class HomeScreen extends React.Component {
             <Button title="Load Games" onPress={this.getGames} />
           </View>
 
-          <View>
-            <Text style={styles.getStartedText}>
-              If you select a team from the options below, it will weigh your
-              favorite team more heavily in the results.
-            </Text>
-          </View>
           {Platform.OS === 'android' ? (
             <Picker
               selectedValue={this.state.favTeam}
