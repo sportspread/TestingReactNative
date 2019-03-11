@@ -1,7 +1,6 @@
 /* eslint-disable complexity */
 import React from 'react'
 import {
-  Dimensions,
   Platform,
   ScrollView,
   StyleSheet,
@@ -37,6 +36,7 @@ export default class HomeScreen extends React.Component {
     this.findPlayer = this.findPlayer.bind(this)
     this.getGames = this.getGames.bind(this)
     this.scrollToTop = this.scrollToTop.bind(this)
+    this.getSpread = this.getSpread.bind(this)
   }
   static navigationOptions = {
     header: null,
@@ -48,6 +48,7 @@ export default class HomeScreen extends React.Component {
 
   DO NOT DELETE
   */
+
     // fetch(
     //   'https://therundown-therundown-v1.p.rapidapi.com/sports/4/events?include=scores+or+teams+or+all_periods',
     //   {
@@ -76,6 +77,7 @@ export default class HomeScreen extends React.Component {
     //   .then(filtered => {
     //     this.setState({ allGamesData: filtered })
     //   })
+
     /* 
   Below here is for testing using dummy data
 
@@ -83,6 +85,7 @@ export default class HomeScreen extends React.Component {
 
   dOnT TeLl Me WhAt To Do
   */
+
     this.setState({ allGamesData: data.events })
   }
   scrollToTop() {
@@ -126,6 +129,22 @@ export default class HomeScreen extends React.Component {
     }
   }
 
+  getSpread(event) {
+    let counter = 0
+    let total = 0
+    for (key in event.lines) {
+      if (event.lines.hasOwnProperty([key])) {
+        let curSpread =
+          event.lines[key].spread.point_spread_home > 0
+            ? event.lines[key].spread.point_spread_home
+            : event.lines[key].spread.point_spread_home * -1
+        total += curSpread
+        counter++
+      }
+    }
+    return total / counter
+  }
+
   getGames() {
     const { allGamesData, favTeam, playerTeam } = this.state
     let teamsAndSpreads = allGamesData.map(event => {
@@ -137,10 +156,7 @@ export default class HomeScreen extends React.Component {
             isHome: team.is_home,
           }
         }),
-        spread:
-          event.lines[1].spread.point_spread_home > 0
-            ? event.lines[1].spread.point_spread_home
-            : event.lines[1].spread.point_spread_home * -1,
+        spread: this.getSpread(event),
       }
     })
 
@@ -165,6 +181,7 @@ export default class HomeScreen extends React.Component {
     }
 
     let sorted = this.bubbleSort(teamsAndSpreads)
+    console.log(sorted)
     this.scrollToTop()
     this.setState({
       bestGame: sorted.shift(),
@@ -193,17 +210,7 @@ export default class HomeScreen extends React.Component {
               this.state.bestGame.teams.length !== 0 ? (
                 <TopMatch bestGame={this.state.bestGame} />
               ) : (
-                <Card>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Text h>No Games Found</Text>
-                  </View>
-                </Card>
+                <Text />
               )}
               {this.state.bestGame.teams === undefined ? (
                 <Text />
@@ -248,7 +255,6 @@ export default class HomeScreen extends React.Component {
                 paddingTop: 20,
                 paddingBottom: 15,
                 alignItems: 'center',
-                marginHorizontal: 50,
               }}
             >
               <Button title="Load Games" onPress={this.getGames} />
@@ -379,7 +385,6 @@ export default class HomeScreen extends React.Component {
               }}
             >
               <Button
-                style={{ paddingTop: 100, paddingBottom: 15 }}
                 onPress={this.findPlayer}
                 title="Set Player"
                 color="#90A4AE"
