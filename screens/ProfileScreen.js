@@ -8,14 +8,7 @@ import {
   TextInput,
   Linking,
 } from 'react-native'
-import {
-  Image,
-  Text,
-  Card,
-  Button,
-  Avatar,
-  SocialIcon,
-} from 'react-native-elements'
+import { Text, Card, Button, Avatar, SocialIcon } from 'react-native-elements'
 import ActionSheet from 'react-native-actionsheet'
 import { NBATeams, NBALogos } from '../teamsAlphabetical'
 const NBA = require('nba')
@@ -25,7 +18,6 @@ export default class ProfileScreen extends React.Component {
     super()
     this.state = {
       favTeam: 'Tap Me!',
-      image: '',
       favPlayer: 'Search Players Below',
       text: '',
     }
