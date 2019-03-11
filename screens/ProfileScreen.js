@@ -47,8 +47,9 @@ export default class ProfileScreen extends React.Component {
       });
     } else {
       this.setState({
-        text: "Please Enter a Valid Player Name"
+        text: ""
       });
+      alert("Please Enter a Valid Player Name");
     }
   }
 
